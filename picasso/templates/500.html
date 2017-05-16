@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="alert alert-danger text-center" role="alert">
+	<h1>500 Internal Server Error</h1>
+</div>
+
+<h3>Something went wrong.  Perhaps you tried to upload a non-image file?  In that case, <a href="{{ url_for('landing') }}">start over and try again.</a></h3>
+
+<h3>If you're running locally, you can <a href="http://flask.pocoo.org/docs/latest/quickstart/">restart Flask in debug mode</a> and look at the stack trace.</h3>
+
+<h3>Finally, if you've found a bug, please <a href="https://github.com/merantix/picasso/issues">file an issue!</a></h3>
+{% endblock %}

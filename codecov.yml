@@ -1,0 +1,32 @@
+codecov:
+  branch: master     # the branch to show by default
+  bot: rhsimplex         
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project:
+      default:
+        target: auto
+        if_no_uploads: error
+
+    patch:
+      default:
+        target: "80%"
+        if_no_uploads: error
+
+  ignore:          # files and folders that will be removed during processing
+    - "docs/*"
+    - "tests/*"
+    - "examples/*"
+    - "static/*"
+    - "templates/*"
+
+comment:
+  # @stevepeak (from codecov.io) suggested we change 'suggestions' to 'uncovered'
+  # in the following line. Thanks Steve!
+  layout: "header, diff, changes, sunburst, uncovered"
+  behavior: default

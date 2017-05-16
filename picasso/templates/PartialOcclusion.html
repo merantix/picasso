@@ -1,0 +1,29 @@
+{% extends "result.html" %}
+{% block vis %}
+	<table class="table table-sm table-striped">
+		<tbody>
+			{% for result in results %}
+				<tr>
+					<td align="center"><b>{{ result.filename }}</b></td>
+					<td align="center"><b>Occlusion Grid</b></td>
+					{% for prob in result.predict_probs %}
+						<td align="center"><b>{{ prob.name }}: {{ prob.prob }}</b></td>
+					{% endfor %}
+				</tr>
+				<tr>
+					<td align="center">
+						<img src="inputs/{{ result.filename }}" style="width:244px;height:244px;"/>
+					</td>
+					<td align="center">
+						<img src="outputs/{{ result.example_filename }}" style="width:244px;height:244px;"/>
+					</td>
+					{% for filename in result.result_filenames %}
+						<td align="center">
+							<img src="outputs/{{ filename }}" style="width:244px;height:244px;"/>
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+  </table>
+{% endblock %}

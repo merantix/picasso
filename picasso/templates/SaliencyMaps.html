@@ -1,0 +1,25 @@
+{% extends "result.html" %}
+{% block vis %}
+<table class="table table-sm table-striped">
+	<tbody>
+		{% for result in results %}
+			<tr>
+				<td align="center"><b>{{ result.filename }}</b></td>
+				{% for prob in result.predict_probs %}
+					<td align="center"><b>{{ prob.name }}: {{ prob.prob }}</b></td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<td align="center">
+					<img src="inputs/{{ result.filename }}" style="width:244px;height:244px;"/>
+				</td>
+				{% for filename in result.gradient_image_names %}
+					<td align="center">
+						<img src="outputs/{{ filename }}" style="width:244px;height:244px;"/>
+					</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		</tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "result.html" %}
+{% block vis %}
+<table class="table table-sm table-striped">
+	<tbody>
+	{% for result in results %}
+    <tr>
+      <td align="center"><b> {{ result.filename }} </b></td>
+      {% for predict_prob in result.predict_probs %}
+        <td align="center"><b> {{ predict_prob.name }} </b></td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="inputs/{{ result.filename }}" style="width:244px;height:244px;"/>
+      </td>
+      {% for predict_prob in result.predict_probs %}
+        <td class="vert-align" align="center"> {{ predict_prob.prob }} </td>
+      {% endfor %}
+    </tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

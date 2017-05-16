@@ -1,0 +1,31 @@
+<!doctype html>
+<head>
+  <title>{{ app_state.app_title }}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel=stylesheet type=text/css href="{{ url_for('static',
+  filename='style.css') }}">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<div class="container-fluid">
+	<h1><a href="https://github.com/merantix/picasso">{{ app_state.app_title }}</a>
+		<small class="text-muted"> by
+		 	<a href="http://www.merantix.com">Merantix</a>
+		</small>
+	</h1>
+  <div class=info>
+		<h4><b>Current backend:</b> {{ app_state.backend }}</h4>
+    {% if app_state.latest_ckpt_name is defined %}
+		<h4><b>Current checkpoint:</b> {{ app_state.latest_ckpt_name }}</h4>
+    {% endif %}
+    {% if app_state.latest_ckpt_time is defined %}
+		<h4><b>Last updated:</b> {{ app_state.latest_ckpt_time }}</h4>
+    {% endif %}
+    <a href="{{ url_for('landing') }}" class="btn btn-primary" role="button">Start over</a>
+  </div>
+  <hr>
+  {% block body %}{% endblock %}
+</div>

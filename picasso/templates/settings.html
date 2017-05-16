@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+<h4><b>Selected Visualization:</b> {{ current_vis }}</h4>
+	<form name="settings" action="{{ url_for('select_files') }}" method="POST">
+		{% for setting in settings %}
+		<div class="form-group col-xs-2">
+			<label for="{{ setting }}">{{ setting }}</label>
+			<select class="form-control" name={{ setting }} id={{ setting }}>
+					{% for option in settings[setting] %}
+							<option value="{{ option }}">{{ option }}</option>
+					{% endfor %}
+				</select>
+		</div>
+		{% endfor %}
+			<button type="submit" class="btn btn-primary btn-lg btn-block">Choose files</button>	
+	</form>
+{% endblock %}

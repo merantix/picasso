@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+	<h4><b>Selected Visualization:</b> {{ current_vis }}</h4>
+  {% if settings is defined %}
+		{% for setting in settings %}
+			<p>
+        {{ setting }}: {{ settings[setting] }}
+			</p>
+		{% endfor %}
+  {% endif %}
+  {% block vis %}{% endblock vis %}
+  {% if duration is defined %}
+    <hr>
+    <p>Computing the visualization took {{ duration }} seconds.
+  {% endif %}
+  {% if reference_link is defined %}
+    <a href="{{ reference_link }}">Visualization Reference</a>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+	<h4><b>Selected Visualization:</b> {{ current_vis }}</h4>
+  {% if settings is defined %}
+		{% for setting in settings %}
+			<p>
+        {{ setting }}: {{ settings[setting] }}
+			</p>
+		{% endfor %}
+  {% endif %}
+	<form action="{{ url_for('select_files') }}" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="fileupload">Select input images</label>
+      <input type="file" name="file[]" multiple="" id="fileupload">
+      <p class="help-block">Image types only, please.  Will be resized to CNN input
+      shape.</p>
+      <label class="btn btn-primary">
+        Upload <input type="submit" value="Upload" style="display: none;">
+      </label>
+    </div>
+	</form>
+{% endblock %}

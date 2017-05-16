@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+	<form name="choice" action="" method="POST">
+		<div class="form-group">
+			<label for="vis-select">Available visualizations</label>
+			<select class="form-control" name="choice" id="vis-select">
+				{% for vis in visualizations %}
+					<option value="{{ vis.name }}">{{ vis.description }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="form-group">
+			<button class="btn btn-primary btn-block" type="submit">Go!</button>	
+		</div>
+	</form>
+{% endblock %}

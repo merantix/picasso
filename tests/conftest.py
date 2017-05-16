@@ -1,0 +1,31 @@
+from PIL import Image
+import numpy as np
+import pytest
+
+from picasso import app as _app
+
+
+@pytest.fixture
+def app():
+    return _app
+
+
+@pytest.fixture(scope='session')
+def random_image_files(tmpdir_factory):
+    fn = tmpdir_factory.mktemp('images')
+    for i in range(4):
+        imarray = np.random.rand(10**i, 10**i, 3) * 255
+        img = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
+        img.save(str(fn.join('{}.png'.format(i))), 'PNG')
+    return fn
+
+
+@pytest.fixture
+def example_prob_array():
+    return np.random.random((3, 10))
+
+
+@pytest.fixture
+def base_model():
+    from picasso.ml_frameworks.model import Model
+    return Model()

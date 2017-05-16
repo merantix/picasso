@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="alert alert-warning text-center" role="alert">
+	<h1>404 Not Found Error</h1>
+</div>
+
+<h3>You tried to navigate to a page that doesn't exist. Why don't you <a href="{{ url_for('landing') }}">start over and try again?</a></h3>
+
+{% endblock %}
