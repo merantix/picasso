@@ -24,6 +24,17 @@ See the `Medium post`_ for an introduction to Picasso.
 * Free software: Eclipse Public License
 * Documentation: https://picasso.readthedocs.io.
 
+If you use Picasso in your research, `please cite our paper`_:
+
+.. code::
+
+        @misc{picasso2017,
+              Author = {Ryan Henderson and Rasmus Rothe},
+              Title = {Picasso: A Neural Network Visualizer},
+              Year = {2017},
+              Eprint = {arXiv:1705.05627},
+              Url = {https://arxiv.org/abs/1705.05627}
+             }
 
 Quickstart
 ----------
@@ -106,3 +117,4 @@ Credits
 .. _Rasmus: https://github.com/rrothe
 .. _Stefan: https://github.com/knub
 .. _`Medium post`: https://medium.com/merantix/picasso-a-free-open-source-visualizer-for-cnns-d8ed3a35cfc5
+.. _`please cite our paper`: https://arxiv.org/abs/1705.05627
