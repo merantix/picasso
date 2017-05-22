@@ -35,7 +35,7 @@ class KerasModel(TFModel):
                 is to take the latest of each, by OS timestamp.
 
         """
-        if int('keras.__version'[0]) == 1:
+        if keras.__version__[0] == '1':
             # find newest ckpt and graph files
             try:
                 latest_ckpt = max(glob.iglob(
@@ -68,7 +68,7 @@ class KerasModel(TFModel):
 
             self.tf_predict_var = self.model.outputs[0]
             self.tf_input_var = self.model.inputs[0]
-        if int('keras.__version'[0]) == 2:
+        if keras.__version__[0] == '2':
             try:
                 latest_ckpt = max(glob.iglob(
                     os.path.join(data_dir, '*.h*5')),
