@@ -86,7 +86,7 @@ class KerasModel(TFModel):
 
             # for tensorflow compatibility
             K.set_learning_phase(0)
-            self.keras=load_model(latest_ckpt)
+            self.model=load_model(latest_ckpt)
 
             self.sess = K.get_session()
 
