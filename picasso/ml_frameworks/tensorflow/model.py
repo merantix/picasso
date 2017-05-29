@@ -26,12 +26,26 @@ class TFModel(Model):
         self.sess.as_default()
         # find newest ckpt and meta files
         try:
-            latest_ckpt_fn = max(glob.iglob(os.path.join(data_dir, '*.ckpt*')),
-                                 key=os.path.getctime)
+            latest_ckpt_fn = max(
+                filter(
+                    # exclude index and meta files which may have earlier
+                    # timestamps
+                    lambda x: os.path.splitext(x)[-1].startswith('.meta') or
+                    os.path.splitext(x)[-1].startswith('.index'),
+                    glob.glob(os.path.join(data_dir, '*.ckpt*'))
+                ),
+                key=os.path.getctime)
             self.latest_ckpt_time = str(datetime.fromtimestamp(
                 os.path.getmtime(latest_ckpt_fn)
             ))
-            latest_ckpt = latest_ckpt_fn[:latest_ckpt_fn.rfind('.ckpt') + 5]
+            # remove any step info that's been appended to the
+            # extenstion
+            fileext_div = latest_ckpt_fn.rfind('.ckpt')
+            additional_ext = latest_ckpt_fn.rfind('.', fileext_div + 1)
+            if additional_ext < 0:
+                latest_ckpt = latest_ckpt_fn
+            else:
+                latest_ckpt = latest_ckpt_fn[:additional_ext]
         except ValueError:
             raise FileNotFoundError('No checkpoint (.ckpt) files '
                                     'available at {}'.format(data_dir))
