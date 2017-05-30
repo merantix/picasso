@@ -44,7 +44,7 @@ from flask import (
 )
 
 from picasso import app
-from picasso.ml_frameworks.model import generate_model
+from picasso.ml_frameworks.model import get_model
 from picasso.visualizations import BaseVisualization
 from picasso.visualizations import *
 
@@ -76,20 +76,27 @@ else:
 # safest way.  Would be much better to connect to a
 # persistent tensorflow session running in another process or
 # machine.
-ml_backend = \
-        generate_model(
-            **{k.lower(): v for (k, v)
-               in app.config.items()
-               if k.startswith('BACKEND')}
-        )
-ml_backend.load(app.config['DATA_DIR'])
+model = get_model(app.config['MODEL_CLS_PATH'],
+                  app.config['MODEL_CLS_NAME'],
+                  app.config['DATA_DIR'])
+
+
+def get_model():
+    """Get the NN model that's being analyzed from the request context.  Put
+    the model in the request context if it is not yet there.
+
+    Returns:
+        instance of :class:`.ml_frameworks.model.Model` or derived
+        class
+    """
+    if not hasattr(g, 'model'):
+        g.model = model
+    return g.model
 
 
 def get_visualizations():
-    """Get visualization classes in context
-
-    Puts the available visualizations in the request context
-    and returns them.
+    """Get the available visualizations from the request context.  Put the
+    visualizations in the request context if they are not yet there.
 
     Returns:
         :obj:`list` of instances of :class:`.BaseVisualization` or
@@ -99,24 +106,10 @@ def get_visualizations():
     if not hasattr(g, 'visualizations'):
         g.visualizations = {}
         for VisClass in VISUALIZATON_CLASSES:
-            vis = VisClass(get_ml_backend())
+            vis = VisClass(get_model())
             g.visualizations[vis.__class__.__name__] = vis
 
     return g.visualizations
-
-
-def get_ml_backend():
-    """Get machine learning backend in context
-
-    Puts the backend in the request context and returns it.
-
-    Returns:
-        instance of :class:`.ml_frameworks.model.Model` or derived
-        class
-    """
-    if not hasattr(g, 'ml_backend'):
-        g.ml_backend = ml_backend
-    return g.ml_backend
 
 
 def get_app_state():
@@ -127,12 +120,10 @@ def get_app_state():
 
     """
     if not hasattr(g, 'app_state'):
-        model = get_ml_backend()
+        model = get_model()
         g.app_state = {
             'app_title': APP_TITLE,
-            'backend': type(model).__name__,
-            'latest_ckpt_name': model.latest_ckpt_name,
-            'latest_ckpt_time': model.latest_ckpt_time
+            'model_description': model.description,
         }
     return g.app_state
 
@@ -150,14 +141,14 @@ def landing():
     if request.method == 'POST':
         session['vis_name'] = request.form.get('choice')
         vis = get_visualizations()[session['vis_name']]
-        if hasattr(vis, 'settings'):
+        if vis.AVAILABLE_SETTINGS:
             return visualization_settings()
         return select_files()
 
     # otherwise, on GET request
     visualizations = get_visualizations()
     vis_desc = [{'name': vis,
-                 'description': visualizations[vis].description}
+                 'description': visualizations[vis].DESCRIPTION}
                 for vis in visualizations]
     session.clear()
     return render_template('select_visualization.html',
@@ -171,7 +162,7 @@ def landing():
 def visualization_settings():
     """Visualization settings page
 
-    Will only render if the visualization object has a `settings`
+    Will only render if the visualization object has a non-null `settings`
     attribute.
 
     """
@@ -180,7 +171,7 @@ def visualization_settings():
         return render_template('settings.html',
                                app_state=get_app_state(),
                                current_vis=session['vis_name'],
-                               settings=vis.settings)
+                               settings=vis.AVAILABLE_SETTINGS)
 
 
 @app.route('/select_files', methods=['GET', 'POST'])
@@ -217,10 +208,9 @@ def select_files():
 
         start_time = time.time()
         session['img_output_dir'] = mkdtemp()
-        output = \
-            vis.make_visualization(inputs,
-                                   output_dir=session['img_output_dir'],
-                                   settings=session['settings'])
+        output = vis.make_visualization(inputs,
+                                        output_dir=session['img_output_dir'],
+                                        settings=session['settings'])
         duration = '{:.2f}'.format(time.time() - start_time, 2)
 
         for i, file_obj in enumerate(request.files.getlist('file[]')):
@@ -233,8 +223,8 @@ def select_files():
             entry['data'].save(path, 'PNG')
 
         kwargs = {}
-        if hasattr(vis, 'reference_link'):
-            kwargs.update({'reference_link': vis.reference_link})
+        if vis.REFERENCE_LINK:
+            kwargs['reference_link'] = vis.REFERENCE_LINK
 
         return render_template('{}.html'.format(session['vis_name']),
                                inputs=inputs,
