@@ -28,4 +28,7 @@ def example_prob_array():
 @pytest.fixture
 def base_model():
     from picasso.ml_frameworks.model import BaseModel
-    return BaseModel()
+    class BaseModelForTest(BaseModel):
+        def _load(self, data_dir):
+            pass
+    return BaseModelForTest("")
