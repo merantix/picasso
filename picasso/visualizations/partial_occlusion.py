@@ -22,15 +22,16 @@ class PartialOcclusion(BaseVisualization):
     classifying on the image feature we expect.
 
     """
-    settings = {
+    DESCRIPTION = ('Partially occlude image to determine regions '
+                   'important to classification')
+
+    REFERENCE_LINK = 'https://arxiv.org/abs/1311.2901'
+
+    AVAILABLE_SETTINGS = {
         'Window': ['0.50', '0.40', '0.30', '0.20', '0.10', '0.05'],
         'Strides': ['2', '5', '10', '20', '30'],
         'Occlusion': ['grey', 'black', 'white']
     }
-
-    description = ('Partially occlude image to determine regions '
-                   'important to classification')
-    reference_link = 'https://arxiv.org/abs/1311.2901'
 
     def __init__(self, model):
         super(PartialOcclusion, self).__init__(model)
@@ -53,11 +54,10 @@ class PartialOcclusion(BaseVisualization):
 
         # get class predictions as in ClassProbabilities
         pre_processed_arrays = self.model.preprocess([example['data']
-                                                     for example in inputs])
-        class_predictions = \
-            self.model.sess.run(self.model.tf_predict_var,
-                                feed_dict={self.model.tf_input_var:
-                                           pre_processed_arrays})
+                                                      for example in inputs])
+        class_predictions = self.model.sess.run(
+            self.model.tf_predict_var,
+            feed_dict={self.model.tf_input_var: pre_processed_arrays})
         decoded_predictions = self.model.decode_prob(class_predictions)
 
         results = []
@@ -100,8 +100,8 @@ class PartialOcclusion(BaseVisualization):
     def get_predict_tensor(self):
         # Assume that predict is the softmax
         # tensor in the computation graph
-        return self.model.sess.graph. \
-            get_tensor_by_name(self.model.tf_predict_var.name)
+        return self.model.sess.graph.get_tensor_by_name(
+            self.model.tf_predict_var.name)
 
     def update_settings(self, settings):
         def error_string(setting, setting_val):
@@ -112,19 +112,19 @@ class PartialOcclusion(BaseVisualization):
                                      vis=self.__class__.__name__)
 
         if 'Window' in settings:
-            if settings['Window'] in self.settings['Window']:
+            if settings['Window'] in self.AVAILABLE_SETTINGS['Window']:
                 self.window = float(settings['Window'])
             else:
                 raise ValueError(error_string(settings['Window'], 'Window'))
 
         if 'Strides' in settings:
-            if settings['Strides'] in self.settings['Strides']:
+            if settings['Strides'] in self.AVAILABLE_SETTINGS['Strides']:
                 self.num_windows = int(settings['Strides'])
             else:
                 raise ValueError(error_string(settings['Strides'], 'Strides'))
 
         if 'Occlusion' in settings:
-            if settings['Occlusion'] in self.settings['Occlusion']:
+            if settings['Occlusion'] in self.AVAILABLE_SETTINGS['Occlusion']:
                 self.occlusion_method = settings['Occlusion']
             else:
                 raise ValueError(error_string(settings['Occlusion'],
