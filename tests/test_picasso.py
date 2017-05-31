@@ -72,6 +72,8 @@ class TestBaseModel:
             assert result[0]['prob'] == '{:.3f}'.format(max_val)
             assert result[0]['index'] == example_prob_array[i].argmax()
             assert result[0]['name'] == str(result[0]['index'])
+
+
 class TestKerasModel:
 
     def test_saved_model(self):

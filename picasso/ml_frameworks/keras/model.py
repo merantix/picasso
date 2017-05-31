@@ -53,13 +53,15 @@ class KerasModel(TFModel):
                 self.model = model_from_json(model_json)
 
             self.model.load_weights(latest_ckpt)
-        except BaseException:
+        except ValueError:
             try:
                 self.model = load_model(latest_ckpt)
 
             except ValueError:
                 raise FileNotFoundError('The (.hdf5 or .h5) files available at'
-                                        '{} don\'t have the model architecture '.format(latest_ckpt))
+                                        '{} don\'t have the model'
+                                        ' architecture.'
+                                        .format(latest_ckpt))
 
         self.sess = K.get_session()
 
