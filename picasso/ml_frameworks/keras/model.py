@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 import keras.backend as K
-from keras.models import model_from_json,load_model
+from keras.models import model_from_json, load_model
 
 from picasso.ml_frameworks.tensorflow.model import TFModel
 
@@ -31,7 +31,7 @@ class KerasModel(TFModel):
         """
         # for tensorflow compatibility
         K.set_learning_phase(0)
-        
+
         # find newest ckpt and graph files
         try:
             latest_ckpt = max(glob.iglob(
@@ -58,8 +58,8 @@ class KerasModel(TFModel):
                 self.model = load_model(latest_ckpt)
 
             except ValueError:
-                raise FileNotFoundError('The (.hdf5 or .h5) files '
-                                       'available at {} don\'t have the model architecture '.format(latest_ckpt))
+                raise FileNotFoundError('The (.hdf5 or .h5) files available at'
+                                        '{} don\'t have the model architecture '.format(latest_ckpt))
 
         self.sess = K.get_session()
 
