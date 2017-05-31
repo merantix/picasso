@@ -72,3 +72,25 @@ class TestBaseModel:
             assert result[0]['prob'] == '{:.3f}'.format(max_val)
             assert result[0]['index'] == example_prob_array[i].argmax()
             assert result[0]['name'] == str(result[0]['index'])
+
+
+class TestKerasModel:
+
+    def test_saved_model(self):
+        # tests that KerasModel can load from a saved model
+        import tempfile
+        from picasso.ml_frameworks.keras.model import KerasModel
+
+        data_path = os.path.join('picasso', 'examples',
+                                 'keras', 'data-volume')
+
+        km = KerasModel()
+        km.load(data_path)
+
+        temp = tempfile.mkdtemp()
+        km.model.save(os.path.join(temp, 'temp.h5'))
+
+        km = KerasModel()
+        km.load(temp)
+
+        assert km.tf_predict_var is not None
