@@ -38,7 +38,7 @@ requirements = [
 # E.g. tensorflow-gpu
 try:
     import tensorflow
-except ModuleNotFoundError:
+except ImportError:
     requirements.append('tensorflow>=1.0.0')
 
 test_requirements = [
