@@ -31,9 +31,15 @@ requirements = [
     'requests>=2.13.0',
     'scipy>=0.18.1',
     'six>=1.10.0',
-    'tensorflow>=1.0.0',
     'Werkzeug>=0.11.15',
 ]
+
+# only add tensorflow as a requirement if it is not already provided.
+# E.g. tensorflow-gpu
+try:
+    import tensorflow
+except ImportError:
+    requirements.append('tensorflow>=1.0.0')
 
 test_requirements = [
     'pytest',
