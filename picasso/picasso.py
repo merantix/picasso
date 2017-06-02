@@ -185,6 +185,33 @@ def api_upload_image():
     return jsonify(ok="false")
 
 
+@app.route('/api/visualize', methods=['GET'])
+def api_visualize():
+    session['settings'] = {}
+    image_uid = request.args.get('image')
+    vis_name = request.args.get('visualizer')
+    vis = get_visualizations()[vis_name]
+    if hasattr(vis, 'settings'):
+        for key in vis.settings.keys():
+            if request.args.get(key) is not None:
+                session['settings'][key] = request.args.get(key)
+            else:
+                session['settings'][key] = vis.settings[key][0]
+    inputs = []
+    for image in image_list:
+        if image['uid'] == int(image_uid):
+            full_path = os.path.join(app.config['img_input_dir'],
+                                     image['filename'])
+            entry = {}
+            entry['filename'] = image['filename']
+            entry['data'] = Image.open(full_path)
+            inputs.append(entry)
+    output = vis.make_visualization(inputs,
+                                    output_dir=app.config['img_output_dir'],
+                                    settings=session['settings'])
+    return jsonify(output=output)
+
+
 @app.route('/api/list_images', methods=['GET'])
 def api_list_images():
     return jsonify(images=image_list)
