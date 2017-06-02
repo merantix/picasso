@@ -99,6 +99,10 @@ class TestRestAPI:
                               '&image=' + str(upl_data['uid']))
         assert response.status_code == 200
 
+    def test_listing_images(self, client):
+        response = client.get(url_for('api_list_images'))
+        assert response.status_code == 200
+
 
 class TestBaseModel:
 
