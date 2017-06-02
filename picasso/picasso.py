@@ -40,8 +40,10 @@ from flask import (
     render_template,
     request,
     session,
-    send_from_directory
+    send_from_directory,
+    jsonify
 )
+from werkzeug.utils import secure_filename
 
 from picasso import app
 from picasso.ml_frameworks.model import generate_model
@@ -49,6 +51,9 @@ from picasso.visualizations import BaseVisualization
 from picasso.visualizations import *
 
 APP_TITLE = 'Picasso Visualizer'
+
+# make image upload directory
+app.config['UPLOAD_FOLDER'] = mkdtemp()
 
 # import visualizations classes dynamically
 visualization_attr = vars(
@@ -145,6 +150,28 @@ def api_root():
 
     """
     return jsonify(hello='world')
+
+
+@app.route('/api/upload_image', methods=['POST'])
+def api_upload_image():
+    """Upload images via REST interface
+
+    Check if file upload was successful and sanatize user input.
+
+    """
+    file_upload = request.files['file']
+    if file_upload:
+        filename = secure_filename(file_upload.filename)
+        full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file_upload.save(full_path)
+        app.logger.debug('File is saved as %s', filename)
+        return jsonify(ok="true", file=filename)
+    return jsonify(ok="false")
+
+
+@app.route('/api/list_images', methods=['GET'])
+def api_list_images():
+    return jsonify(images=[])
 
 
 @app.route('/', methods=['GET', 'POST'])

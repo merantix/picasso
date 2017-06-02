@@ -8,6 +8,8 @@ test_picasso
 Tests for `picasso` module.
 """
 import os
+import io
+import json
 
 from flask import url_for
 import pytest
@@ -67,6 +69,14 @@ class TestRestAPI:
 
     def test_api_root_get(self, client):
         assert client.get(url_for('api_root')).status_code == 200
+
+    def test_api_uploading_file(self, client, random_image_files):
+        upload_file = str(random_image_files.listdir()[0])
+        data = {}
+        data['file'] = (io.BytesIO(b"abcdef"), upload_file)
+        response = client.post(url_for('api_upload_image'), data=data)
+        data = json.loads(response.get_data(as_text=True))
+        assert data['ok'] == 'true'
 
 
 class TestBaseModel:
