@@ -66,6 +66,7 @@ class TestWebApp:
 
 
 class TestRestAPI:
+    from picasso.picasso import VISUALIZATON_CLASSES
 
     def test_api_root_get(self, client):
         assert client.get(url_for('api_root')).status_code == 200
@@ -82,6 +83,21 @@ class TestRestAPI:
         assert data['ok'] == 'true'
         assert type(data['file']) is str
         assert type(data['uid']) is int
+
+    @pytest.mark.parametrize("vis", VISUALIZATON_CLASSES)
+    def test_api_visualizing_input(self, client, random_image_files, vis):
+        upload_file = str(random_image_files.listdir()[0])
+        with open(upload_file, "rb") as imageFile:
+            f = imageFile.read()
+            b = bytearray(f)
+        data = {}
+        data['file'] = (io.BytesIO(b), 'test.png')
+        upl_response = client.post(url_for('api_upload_image'), data=data)
+        upl_data = json.loads(upl_response.get_data(as_text=True))
+        response = client.get(url_for('api_visualize') + '?visualizer=' +
+                              vis.__name__ +
+                              '&image=' + str(upl_data['uid']))
+        assert response.status_code == 200
 
 
 class TestBaseModel:
