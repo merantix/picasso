@@ -187,7 +187,7 @@ def api_upload_image():
 
 @app.route('/api/list_images', methods=['GET'])
 def api_list_images():
-    return jsonify(images=[])
+    return jsonify(images=image_list)
 
 
 @app.route('/', methods=['GET', 'POST'])
