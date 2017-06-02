@@ -54,6 +54,8 @@ APP_TITLE = 'Picasso Visualizer'
 
 # make image upload directory
 app.config['UPLOAD_FOLDER'] = mkdtemp()
+app.config['img_input_dir'] = mkdtemp()
+app.config['img_output_dir'] = mkdtemp()
 
 # reset uid counter for the session
 image_uid = 0
@@ -259,20 +261,17 @@ def select_files():
             inputs.append(entry)
 
         start_time = time.time()
-        session['img_output_dir'] = mkdtemp()
-        output = \
-            vis.make_visualization(inputs,
-                                   output_dir=session['img_output_dir'],
-                                   settings=session['settings'])
+        output = vis.make_visualization(inputs,
+                                        output_dir=app.config['img_output_dir'],
+                                        settings=session['settings'])
         duration = '{:.2f}'.format(time.time() - start_time, 2)
 
         for i, file_obj in enumerate(request.files.getlist('file[]')):
             output[i].update({'filename': file_obj.filename})
 
-        temp_dir = mkdtemp()
-        session['img_input_dir'] = temp_dir
+        app.config['img_input_dir']
         for entry in inputs:
-            path = os.path.join(temp_dir, entry['filename'])
+            path = os.path.join(app.config['img_input_dir'], entry['filename'])
             entry['data'].save(path, 'PNG')
 
         kwargs = {}
@@ -301,14 +300,14 @@ def select_files():
 @app.route('/inputs/<filename>')
 def download_inputs(filename):
     """For serving input images"""
-    return send_from_directory(session['img_input_dir'],
+    return send_from_directory(app.config['img_input_dir'],
                                filename)
 
 
 @app.route('/outputs/<filename>')
 def download_outputs(filename):
     """For serving output images"""
-    return send_from_directory(session['img_output_dir'],
+    return send_from_directory(app.config['img_output_dir'],
                                filename)
 
 
