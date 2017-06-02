@@ -72,8 +72,11 @@ class TestRestAPI:
 
     def test_api_uploading_file(self, client, random_image_files):
         upload_file = str(random_image_files.listdir()[0])
+        with open(upload_file, "rb") as imageFile:
+            f = imageFile.read()
+            b = bytearray(f)
         data = {}
-        data['file'] = (io.BytesIO(b"abcdef"), upload_file)
+        data['file'] = (io.BytesIO(b), 'test.png')
         response = client.post(url_for('api_upload_image'), data=data)
         data = json.loads(response.get_data(as_text=True))
         assert data['ok'] == 'true'
