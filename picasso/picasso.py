@@ -53,12 +53,12 @@ from picasso.visualizations import *
 APP_TITLE = 'Picasso Visualizer'
 
 # make image upload directory
-app.config['UPLOAD_FOLDER'] = mkdtemp()
 app.config['img_input_dir'] = mkdtemp()
 app.config['img_output_dir'] = mkdtemp()
 
 # reset uid counter for the session
-image_uid = 0
+image_uid_counter = 0
+image_list = []
 
 # import visualizations classes dynamically
 visualization_attr = vars(
@@ -163,17 +163,25 @@ def api_upload_image():
 
     Check if file upload was successful and sanatize user input.
 
+    TODO: return file URL instead of filename
+
     """
-    global image_uid
+    global image_uid_counter
+    global image_list
     file_upload = request.files['file']
     if file_upload:
-        filename = secure_filename(file_upload.filename)
-        full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image = {}
+        image['filename'] = secure_filename(file_upload.filename)
+        full_path = os.path.join(app.config['img_input_dir'],
+                                 image['filename'])
         file_upload.save(full_path)
-        uid = image_uid
-        image_uid += 1
-        app.logger.debug('File %d is saved as %s', uid, filename)
-        return jsonify(ok="true", file=filename, uid=uid)
+        image['uid'] = image_uid_counter
+        image_uid_counter += 1
+        app.logger.debug('File %d is saved as %s',
+                         image['uid'],
+                         image['filename'])
+        image_list.append(image)
+        return jsonify(ok="true", file=image['filename'], uid=image['uid'])
     return jsonify(ok="false")
 
 
