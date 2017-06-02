@@ -137,6 +137,16 @@ def get_app_state():
     return g.app_state
 
 
+@app.route('/api/', methods=['GET'])
+def api_root():
+    """The root of the REST API
+
+    displays a hello world message.
+
+    """
+    return jsonify(hello='world')
+
+
 @app.route('/', methods=['GET', 'POST'])
 def landing():
     """Landing page for the application

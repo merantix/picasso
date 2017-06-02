@@ -63,6 +63,12 @@ class TestWebApp:
         assert rv.status_code == 200
 
 
+class TestRestAPI:
+
+    def test_api_root_get(self, client):
+        assert client.get(url_for('api_root')).status_code == 200
+
+
 class TestBaseModel:
 
     def test_decode_prob(self, base_model, example_prob_array):
