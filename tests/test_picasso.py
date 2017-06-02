@@ -77,6 +77,8 @@ class TestRestAPI:
         response = client.post(url_for('api_upload_image'), data=data)
         data = json.loads(response.get_data(as_text=True))
         assert data['ok'] == 'true'
+        assert type(data['file']) is str
+        assert type(data['uid']) is int
 
 
 class TestBaseModel:

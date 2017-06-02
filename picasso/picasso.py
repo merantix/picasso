@@ -55,6 +55,9 @@ APP_TITLE = 'Picasso Visualizer'
 # make image upload directory
 app.config['UPLOAD_FOLDER'] = mkdtemp()
 
+# reset uid counter for the session
+image_uid = 0
+
 # import visualizations classes dynamically
 visualization_attr = vars(
     import_module('picasso.visualizations'))
@@ -159,13 +162,16 @@ def api_upload_image():
     Check if file upload was successful and sanatize user input.
 
     """
+    global image_uid
     file_upload = request.files['file']
     if file_upload:
         filename = secure_filename(file_upload.filename)
         full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file_upload.save(full_path)
-        app.logger.debug('File is saved as %s', filename)
-        return jsonify(ok="true", file=filename)
+        uid = image_uid
+        image_uid += 1
+        app.logger.debug('File %d is saved as %s', uid, filename)
+        return jsonify(ok="true", file=filename, uid=uid)
     return jsonify(ok="false")
 
 
