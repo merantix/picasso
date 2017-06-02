@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 import numpy as np
 from PIL import Image
@@ -7,6 +8,7 @@ from PIL import Image
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot
+import plotly
 
 from picasso.visualizations import BaseVisualization
 
@@ -86,13 +88,13 @@ class PartialOcclusion(BaseVisualization):
                 os.path.join(output_dir, example_filename),
                 format=im_format)
 
-            filenames = \
-                self.make_heatmaps(predictions,
-                                   output_dir,
-                                   example['filename'],
-                                   decoded_predictions=decoded_predictions[i])
+            graphs = self.make_heatmaps(predictions,
+                                        decoded_predictions=
+                                        decoded_predictions[i])
+            result_graphs = json.dumps(graphs,
+                                       cls=plotly.utils.PlotlyJSONEncoder)
             results.append({'input_filename': example['filename'],
-                            'result_filenames': filenames,
+                            'result_graphs': result_graphs,
                             'predict_probs': decoded_predictions[i],
                             'example_filename': example_filename})
         return results
@@ -130,34 +132,29 @@ class PartialOcclusion(BaseVisualization):
                 raise ValueError(error_string(settings['Occlusion'],
                                               'Occlusion'))
 
-    def make_heatmaps(self, predictions,
-                      output_dir, filename,
-                      decoded_predictions=None):
+    def make_heatmaps(self, predictions, decoded_predictions=None):
+        stacked_heatmaps = self.stacked_heatmaps(predictions,
+                                                 decoded_predictions)
+        graphs = []
+        for i in range(stacked_heatmaps.shape[-1]):
+            graphs.append(
+                dict(
+                    data=[
+                        dict(z=stacked_heatmaps[:, :, i],
+                             type='heatmap'),
+                    ]
+                )
+            )
+        return graphs
+
+    def stacked_heatmaps(self, predictions, decoded_predictions=None):
         if decoded_predictions:
             relevant_class_indices = [pred['index']
                                       for pred in decoded_predictions]
             predictions = predictions[:, relevant_class_indices]
-        stacked_heatmaps = predictions.reshape(self.num_windows,
-                                               self.num_windows,
-                                               predictions.shape[-1])
-        filenames = []
-        for i in range(predictions.shape[-1]):
-            grid = stacked_heatmaps[:, :, i]
-            pyplot.axis('off')
-            if i == 0:
-                im = pyplot.imshow(grid, vmin=0, vmax=1)
-                pyplot.axis('off')
-                im.axes.get_xaxis().set_visible(False)
-                im.axes.get_yaxis().set_visible(False)
-            else:
-                im.set_data(grid)
-            hm_filename = '{ts}{label}_{fn}'.format(ts=str(time.time()),
-                                                    label=str(i),
-                                                    fn=filename)
-            pyplot.savefig(os.path.join(output_dir, hm_filename),
-                           format='PNG', bbox_inches='tight', pad_inches=0)
-            filenames.append(hm_filename)
-        return filenames
+        return predictions.reshape(self.num_windows,
+                                   self.num_windows,
+                                   predictions.shape[-1])
 
     def occluded_images(self, im):
         width = im.size[0]

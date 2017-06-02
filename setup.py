@@ -23,6 +23,7 @@ requirements = [
     'olefile>=0.44',
     'packaging>=16.8',
     'Pillow>=4.0.0',
+    'plotly>=2.0.9',
     'protobuf>=3.2.0',
     'pyparsing>=2.1.10',
     'python-dateutil>=2.6.0',

@@ -1,5 +1,11 @@
 {% extends "result.html" %}
 {% block vis %}
+  <!-- D3.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <!-- Plotly.js -->
+  <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script>
 	<table class="table table-sm table-striped">
 		<tbody>
 			{% for result in results %}
@@ -15,11 +21,10 @@
 						<img src="inputs/{{ result.filename }}" style="width:244px;height:244px;"/>
 					</td>
 					<td align="center">
-						<img src="outputs/{{ result.example_filename }}" style="width:244px;height:244px;"/>
 					</td>
-					{% for filename in result.result_filenames %}
+					{% for graph in result.result_graphs %}
 						<td align="center">
-							<img src="outputs/{{ filename }}" style="width:244px;height:244px;"/>
+              {{ graph }}
 						</td>
 					{% endfor %}
 				</tr>
