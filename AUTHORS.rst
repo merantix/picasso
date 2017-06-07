@@ -10,4 +10,5 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* XdpAreKid <2161220107@email.szu.edu.cn>
+* Jan Steinke <jan.steinke@gmail.com>
