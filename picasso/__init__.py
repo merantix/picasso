@@ -2,7 +2,7 @@
 
 __author__ = """Ryan Henderson"""
 __email__ = 'ryan@merantix.com'
-__version__ = 'v0.1.1'
+__version__ = 'v0.1.2'
 
 from flask import Flask
 import os
