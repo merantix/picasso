@@ -157,8 +157,8 @@ def api_root():
     return jsonify(hello='world')
 
 
-@app.route('/api/upload_image', methods=['POST'])
-def api_upload_image():
+@app.route('/api/images', methods=['POST', 'GET'])
+def api_images():
     """Upload images via REST interface
 
     Check if file upload was successful and sanatize user input.
@@ -168,22 +168,24 @@ def api_upload_image():
     """
     global image_uid_counter
     global image_list
-    file_upload = request.files['file']
-    if file_upload:
-        image = {}
-        image['filename'] = secure_filename(file_upload.filename)
-        full_path = os.path.join(app.config['img_input_dir'],
-                                 image['filename'])
-        file_upload.save(full_path)
-        image['uid'] = image_uid_counter
-        image_uid_counter += 1
-        app.logger.debug('File %d is saved as %s',
-                         image['uid'],
-                         image['filename'])
-        image_list.append(image)
-        return jsonify(ok="true", file=image['filename'], uid=image['uid'])
-    return jsonify(ok="false")
-
+    if request.method == 'POST':
+        file_upload = request.files['file']
+        if file_upload:
+            image = {}
+            image['filename'] = secure_filename(file_upload.filename)
+            full_path = os.path.join(app.config['img_input_dir'],
+                                     image['filename'])
+            file_upload.save(full_path)
+            image['uid'] = image_uid_counter
+            image_uid_counter += 1
+            app.logger.debug('File %d is saved as %s',
+                             image['uid'],
+                             image['filename'])
+            image_list.append(image)
+            return jsonify(ok="true", file=image['filename'], uid=image['uid'])
+        return jsonify(ok="false")
+    if request.method == 'GET':
+        return jsonify(images=image_list)
 
 @app.route('/api/visualize', methods=['GET'])
 def api_visualize():
@@ -210,11 +212,6 @@ def api_visualize():
                                     output_dir=app.config['img_output_dir'],
                                     settings=session['settings'])
     return jsonify(output=output)
-
-
-@app.route('/api/list_images', methods=['GET'])
-def api_list_images():
-    return jsonify(images=image_list)
 
 
 @app.route('/', methods=['GET', 'POST'])
