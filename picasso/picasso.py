@@ -52,14 +52,6 @@ from picasso.visualizations import *
 
 APP_TITLE = 'Picasso Visualizer'
 
-# make image upload directory
-app.config['img_input_dir'] = mkdtemp()
-app.config['img_output_dir'] = mkdtemp()
-
-# reset uid counter for the session
-image_uid_counter = 0
-image_list = []
-
 # import visualizations classes dynamically
 visualization_attr = vars(
     import_module('picasso.visualizations'))
@@ -93,6 +85,21 @@ ml_backend = \
                if k.startswith('BACKEND')}
         )
 ml_backend.load(app.config['DATA_DIR'])
+
+
+def initialize_new_session():
+    if 'image_uid_counter' in session and 'image_list' in session:
+        app.logger.debug('images are already being tracked')
+    else:
+        # reset image list counter for the session
+        session['image_uid_counter'] = 0
+        session['image_list'] = []
+    if 'img_input_dir' in session and 'img_output_dir' in session:
+        app.logger.debug('temporary image directories already exist')
+    else:
+        # make image upload directory
+        session['img_input_dir'] = mkdtemp()
+        session['img_output_dir'] = mkdtemp()
 
 
 def get_visualizations():
@@ -154,6 +161,7 @@ def api_root():
     displays a hello world message.
 
     """
+    initialize_new_session()
     return jsonify(hello='world')
 
 
@@ -166,29 +174,30 @@ def api_images():
     TODO: return file URL instead of filename
 
     """
-    global image_uid_counter
-    global image_list
+    initialize_new_session()
     if request.method == 'POST':
         file_upload = request.files['file']
         if file_upload:
             image = {}
             image['filename'] = secure_filename(file_upload.filename)
-            full_path = os.path.join(app.config['img_input_dir'],
+            full_path = os.path.join(session['img_input_dir'],
                                      image['filename'])
             file_upload.save(full_path)
-            image['uid'] = image_uid_counter
-            image_uid_counter += 1
+            image['uid'] = session['image_uid_counter']
+            session['image_uid_counter'] += 1
             app.logger.debug('File %d is saved as %s',
                              image['uid'],
                              image['filename'])
-            image_list.append(image)
+            session['image_list'].append(image)
             return jsonify(ok="true", file=image['filename'], uid=image['uid'])
         return jsonify(ok="false")
     if request.method == 'GET':
-        return jsonify(images=image_list)
+        return jsonify(images=session['image_list'])
+
 
 @app.route('/api/visualize', methods=['GET'])
 def api_visualize():
+    initialize_new_session()
     session['settings'] = {}
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
@@ -200,16 +209,16 @@ def api_visualize():
             else:
                 session['settings'][key] = vis.settings[key][0]
     inputs = []
-    for image in image_list:
+    for image in session['image_list']:
         if image['uid'] == int(image_uid):
-            full_path = os.path.join(app.config['img_input_dir'],
+            full_path = os.path.join(session['img_input_dir'],
                                      image['filename'])
             entry = {}
             entry['filename'] = image['filename']
             entry['data'] = Image.open(full_path)
             inputs.append(entry)
     output = vis.make_visualization(inputs,
-                                    output_dir=app.config['img_output_dir'],
+                                    output_dir=session['img_output_dir'],
                                     settings=session['settings'])
     return jsonify(output=output)
 
@@ -224,6 +233,7 @@ def landing():
     render file selection.
 
     """
+    initialize_new_session()
     if request.method == 'POST':
         session['vis_name'] = request.form.get('choice')
         vis = get_visualizations()[session['vis_name']]
@@ -252,6 +262,7 @@ def visualization_settings():
     attribute.
 
     """
+    initialize_new_session()
     if request.method == 'POST':
         vis = get_visualizations()[session['vis_name']]
         return render_template('settings.html',
@@ -272,6 +283,7 @@ def select_files():
         and `result`.
 
     """
+    initialize_new_session()
     if 'file[]' in request.files:
         vis = get_visualizations()[session['vis_name']]
         inputs = []
@@ -294,16 +306,15 @@ def select_files():
 
         start_time = time.time()
         output = vis.make_visualization(inputs,
-                                        output_dir=app.config['img_output_dir'],
+                                        output_dir=session['img_output_dir'],
                                         settings=session['settings'])
         duration = '{:.2f}'.format(time.time() - start_time, 2)
 
         for i, file_obj in enumerate(request.files.getlist('file[]')):
             output[i].update({'filename': file_obj.filename})
 
-        app.config['img_input_dir']
         for entry in inputs:
-            path = os.path.join(app.config['img_input_dir'], entry['filename'])
+            path = os.path.join(session['img_input_dir'], entry['filename'])
             entry['data'].save(path, 'PNG')
 
         kwargs = {}
@@ -332,14 +343,16 @@ def select_files():
 @app.route('/inputs/<filename>')
 def download_inputs(filename):
     """For serving input images"""
-    return send_from_directory(app.config['img_input_dir'],
+    initialize_new_session()
+    return send_from_directory(session['img_input_dir'],
                                filename)
 
 
 @app.route('/outputs/<filename>')
 def download_outputs(filename):
     """For serving output images"""
-    return send_from_directory(app.config['img_output_dir'],
+    initialize_new_session()
+    return send_from_directory(session['img_output_dir'],
                                filename)
 
 
