@@ -78,7 +78,7 @@ class TestRestAPI:
             b = bytearray(f)
         data = {}
         data['file'] = (io.BytesIO(b), 'test.png')
-        response = client.post(url_for('api_upload_image'), data=data)
+        response = client.post(url_for('api_images'), data=data)
         data = json.loads(response.get_data(as_text=True))
         assert data['ok'] == 'true'
         assert type(data['file']) is str
@@ -92,7 +92,7 @@ class TestRestAPI:
             b = bytearray(f)
         data = {}
         data['file'] = (io.BytesIO(b), 'test.png')
-        upl_response = client.post(url_for('api_upload_image'), data=data)
+        upl_response = client.post(url_for('api_images'), data=data)
         upl_data = json.loads(upl_response.get_data(as_text=True))
         response = client.get(url_for('api_visualize') + '?visualizer=' +
                               vis.__name__ +
@@ -100,7 +100,7 @@ class TestRestAPI:
         assert response.status_code == 200
 
     def test_listing_images(self, client):
-        response = client.get(url_for('api_list_images'))
+        response = client.get(url_for('api_images'))
         assert response.status_code == 200
 
 
