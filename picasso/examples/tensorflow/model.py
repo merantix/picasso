@@ -9,7 +9,8 @@ MNIST_DIM = (28, 28)
 
 
 class TensorflowMNISTModel(TFModel):
-    def preprocess(targets):
+
+    def preprocess(self, targets):
         image_arrays = []
         for target in targets:
             im = target.convert('L')
@@ -22,8 +23,7 @@ class TensorflowMNISTModel(TFModel):
                                    MNIST_DIM[0],
                                    MNIST_DIM[1], 1).astype('float32') / 255
 
-
-    def postprocess(output_arr):
+    def postprocess(self, output_arr):
         images = []
         for row in output_arr:
             im_array = row.reshape(MNIST_DIM)
@@ -31,8 +31,7 @@ class TensorflowMNISTModel(TFModel):
 
         return images
 
-
-    def prob_decode(probability_array, top=5):
+    def prob_decode(self, probability_array, top=5):
         results = []
         for row in probability_array:
             entries = []
