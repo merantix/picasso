@@ -15,29 +15,11 @@ class Default:
     the source.
     """
 
-    #: :obj:`str`: which backend to use
-    BACKEND_ML = 'keras'
+    #: :obj:`str`: filepath of the module containing the model to run
+    MODEL_CLS_PATH = os.path.join(base_dir, 'examples', 'keras', 'model.py')
 
-    #: :obj:`str`: name of the preprocess function
-    BACKEND_PREPROCESSOR_NAME = 'preprocess'
-
-    #: :obj:`str`: filepath of the preprocess function
-    BACKEND_PREPROCESSOR_PATH = os.path.join(
-        base_dir, 'examples', 'keras', 'util.py')
-
-    #: :obj:`str`: name of the postprocess function
-    BACKEND_POSTPROCESSOR_NAME = 'postprocess'
-
-    #: :obj:`str`: filepath of the postprocess function
-    BACKEND_POSTPROCESSOR_PATH = os.path.join(
-        base_dir, 'examples', 'keras', 'util.py')
-
-    #: :obj:`str`: name of the probability decoder function
-    BACKEND_PROB_DECODER_NAME = 'prob_decode'
-
-    #: :obj:`str`: filepath of the probability decoder function
-    BACKEND_PROB_DECODER_PATH = os.path.join(
-        base_dir, 'examples', 'keras', 'util.py')
+    #: :obj:`str`: name of model class
+    MODEL_CLS_NAME = 'KerasMNISTModel'
 
     #: :obj:`str`: path to directory containing weights and graph
     DATA_DIR = os.path.join(

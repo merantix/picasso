@@ -78,6 +78,8 @@ else:
 # machine.
 ml_backend = \
         generate_model(
+            app.config['MODEL_CLS_PATH'],
+            app.config['MODEL_CLS_NAME'],
             **{k.lower(): v for (k, v)
                in app.config.items()
                if k.startswith('BACKEND')}

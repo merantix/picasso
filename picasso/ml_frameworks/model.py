@@ -1,17 +1,9 @@
-import importlib.util
 import warnings
-from importlib import import_module
 from operator import itemgetter
-
-ML_LIBRARIES = {
-    'tensorflow':
-        'picasso.ml_frameworks.tensorflow.model.TFModel',
-    'keras':
-        'picasso.ml_frameworks.keras.model.KerasModel'
-}
+import importlib
 
 
-class Model:
+class BaseModel:
     """Model class interface.
 
     All ML frameworks should derive from this class for the purposes of
@@ -21,12 +13,6 @@ class Model:
     """
 
     def __init__(self,
-                 preprocessor_name='preprocess',
-                 preprocessor_path=None,
-                 postprocessor_name='postprocess',
-                 postprocessor_path=None,
-                 prob_decoder_name='prob_decode',
-                 prob_decoder_path=None,
                  top_probs=5,
                  **kwargs):
         """Attempt to load utilities
@@ -35,55 +21,15 @@ class Model:
         and probability decoder if a path is supplied.
 
         Args:
-            preprocessor_name (str, optional): the name of the preprocessing
-                function. Defaults to 'preprocess'.
-            preprocessor_path (str, optional): the absolute path to the file
-                containing the function named above.  If `None`, then do not
-                try to load a preprocessor.  Defaults to `None`.
-            postprocessor_name (str, optional): the name of the postprocessing
-                function. Defaults to 'postprocess'.
-            postprocessor_path (str, optional): the absolute path to the file
-                containing the function named above.  If `None`, then do not
-                try to load a postprocessor.  Defaults to `None`.
-            prob_decoder_name (str, optional): the name of the postprocessing
-                function. Defaults to 'prob_decode'.
-            prob_decoder_path (str, optional): the absolute path to the file
-                containing the function named above.  If `None`, then do not
-                try to load a prob_decoder.  Defaults to `None`.
             top_probs (int): Number of classes to display per result. For
                 instance, VGG16 has 1000 classes, we don't want to display a
                 visualization for every single possibility.  Defaults to 5.
             **kwargs: Arbitrary keyword arguments, useful for passing specific
                 settings to derived classes.
 
-        Example:
-            If you define a function called "preprocess" at "/path/to/util.py",
-            then try::
-
-                preprocessor_name='preprocess',
-                preprocessor_path='/path/to/util.py'
 
         """
-        self.latest_ckpt_name = None
-        self.latest_ckpt_time = None
         self.top_probs = top_probs
-
-        self.preprocessor_name = preprocessor_name
-        self.preprocessor_path = preprocessor_path
-        self.postprocessor_name = postprocessor_name
-        self.postprocessor_path = postprocessor_path
-        self.prob_decoder_name = prob_decoder_name
-        self.prob_decoder_path = prob_decoder_path
-
-        for util in ('preprocessor', 'postprocessor', 'prob_decoder'):
-            if getattr(self, '{}_path'.format(util)):
-                spec = importlib.util.\
-                        spec_from_file_location(
-                            getattr(self, '{}_name'.format(util)),
-                            getattr(self, '{}_path'.format(util)))
-                setattr(self, util, importlib.util.module_from_spec(spec))
-                spec.loader.exec_module(getattr(self, util))
-
         if kwargs:
             for key, value in kwargs.items():
                 setattr(self, key, value)
@@ -216,22 +162,28 @@ class Model:
             return results
 
 
-def generate_model(backend_ml, **kwargs):
-    """Create a new instance of ML backend
+def generate_model(model_cls_path, model_cls_name, **kwargs):
+    """Get an instance of the described model.
 
     Args:
-        backend_ml (:obj:`str`): name of the backend to use
-        **kwargs: Arbitrary keyword arguments
+        model_cls_path: Path to the module in which the model class
+            is defined.
+        model_cls_name: Name of the model class.
+        data_dir: Directory containing the graph and weights.
+        kwargs: Arbitrary keyword arguments passed to the model's
+            constructor.
 
     Returns:
-        An instance of :class:`.ml_frameworks.model.Model`
+        An instance of :class:`.ml_frameworks.model.BaseModel` or subclass
 
     """
-    module_name, _, class_name = \
-        ML_LIBRARIES[backend_ml].rpartition('.')
-
-    cls = getattr(import_module(module_name), class_name)
-
-    kwargs = {k.partition('_')[-1]:
-              v for (k, v) in kwargs.items()}
-    return cls(**kwargs)
+    spec = importlib.util.spec_from_file_location('active_model',
+                                                  model_cls_path)
+    model_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(model_module)
+    model_cls = getattr(model_module, model_cls_name)
+    model = model_cls(**kwargs)
+    if not isinstance(model, BaseModel):
+        warnings.warn("Loaded model '%s' at '%s' is not an instance of %r"
+                      % (model_cls_name, model_cls_path, BaseModel))
+    return model

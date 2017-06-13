@@ -6,10 +6,10 @@ from datetime import datetime
 import keras.backend as K
 from keras.models import model_from_json, load_model
 
-from picasso.ml_frameworks.tensorflow.model import TFModel
+from picasso.ml_frameworks.model import BaseModel
 
 
-class KerasModel(TFModel):
+class KerasModel(BaseModel):
     """Implements model loading functions for Keras
     Using this Keras module will require the h5py library,
     which is not included with Keras

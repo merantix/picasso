@@ -4,10 +4,10 @@ from datetime import datetime
 
 import tensorflow as tf
 
-from picasso.ml_frameworks.model import Model
+from picasso.ml_frameworks.model import BaseModel
 
 
-class TFModel(Model):
+class TFModel(BaseModel):
     """Implements model loading functions for tensorflow"""
 
     def load(self, data_dir='./'):
