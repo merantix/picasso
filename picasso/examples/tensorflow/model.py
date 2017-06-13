@@ -10,6 +10,10 @@ MNIST_DIM = (28, 28)
 
 class TensorflowMNISTModel(TFModel):
 
+    TF_INPUT_VAR = 'convolution2d_input_1:0'
+
+    TF_PREDICT_VAR = 'Softmax:0'
+
     def preprocess(self, targets):
         image_arrays = []
         for target in targets:

@@ -10,6 +10,14 @@ from picasso.ml_frameworks.model import BaseModel
 class TFModel(BaseModel):
     """Implements model loading functions for tensorflow"""
 
+    # Name of the tensor corresponding to the model's inputs.  You must define
+    # this if you are loading the model from a checkpoint.
+    TF_INPUT_VAR = None
+
+    # Name of the tensor corresponding to the model's inputs.  You must define
+    # this if you are loading the model from a checkpoint.
+    TF_PREDICT_VAR = None
+
     def load(self, data_dir='./'):
         """Load graph and weight data
 
@@ -61,9 +69,9 @@ class TFModel(BaseModel):
             self.saver.restore(sess, latest_ckpt)
 
         self.tf_predict_var = \
-            self.sess.graph.get_tensor_by_name(self.tf_predict_var)
+            self.sess.graph.get_tensor_by_name(self.TF_PREDICT_VAR)
         self.tf_input_var = \
-            self.sess.graph.get_tensor_by_name(self.tf_input_var)
+            self.sess.graph.get_tensor_by_name(self.TF_INPUT_VAR)
 
     def _predict(self, input_array):
         return self.sess.run(self.tf_predict_var,

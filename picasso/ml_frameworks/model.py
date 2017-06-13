@@ -29,6 +29,8 @@ class BaseModel:
 
 
         """
+        self.latest_ckpt_name = None
+        self.latest_ckpt_time = None
         self.top_probs = top_probs
         if kwargs:
             for key, value in kwargs.items():
