@@ -33,3 +33,13 @@ def base_model():
         def load(self, data_dir):
             pass
     return BaseModelForTest()
+
+
+@pytest.fixture
+def tensorflow_model():
+    from picasso.ml_frameworks.tensorflow.model import TFModel
+
+    tfm = TFModel(TF_PREDICT_VAR='Softmax:0',
+                  TF_INPUT_VAR='convolution2d_input_1:0')
+
+    return tfm

@@ -96,21 +96,14 @@ class TestKerasModel:
         assert km.TF_PREDICT_VAR is not None
 
 
-from picasso.ml_frameworks.tensorflow.model import TFModel
-class TFTestModel(TFModel):
-    TF_PREDICT_VAR = 'Softmax:0'
-    TF_INPUT_VAR = 'convolution2d_input_1:0'
-
-
 class TestTensorflowModel:
 
-    def test_tensorflow_model(self, client, monkeypatch):
+    def test_tensorflow_model(self, client, tensorflow_model):
         """Only tests tensorflow backend loads without error
 
         """
         data_path = os.path.join('picasso', 'examples',
                                  'tensorflow', 'data-volume')
-        tfm = TFTestModel()
-        tfm.load(data_path)
-        assert tfm.tf_predict_var is not None
-        assert tfm.tf_input_var is not None
+        tensorflow_model.load(data_path)
+        assert tensorflow_model.TF_PREDICT_VAR is not None
+        assert tensorflow_model.TF_INPUT_VAR is not None
