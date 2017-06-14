@@ -81,8 +81,8 @@ ml_backend = \
             app.config['MODEL_CLS_PATH'],
             app.config['MODEL_CLS_NAME'],
             # passes along all settings prefixed with
-            # "BACKEND_" without the prefix
-            **{k[8:]: v for (k, v)
+            # "BACKEND_" without the prefix, as lowercase
+            **{k.lower()[8:]: v for (k, v)
                in app.config.items()
                if k.startswith('BACKEND')}
         )

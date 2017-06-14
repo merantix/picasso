@@ -93,7 +93,7 @@ class TestKerasModel:
         km = KerasModel()
         km.load(temp)
 
-        assert km.TF_PREDICT_VAR is not None
+        assert km.tf_predict_var is not None
 
 
 class TestTensorflowModel:
@@ -105,5 +105,5 @@ class TestTensorflowModel:
         data_path = os.path.join('picasso', 'examples',
                                  'tensorflow', 'data-volume')
         tensorflow_model.load(data_path)
-        assert tensorflow_model.TF_PREDICT_VAR is not None
-        assert tensorflow_model.TF_INPUT_VAR is not None
+        assert tensorflow_model.tf_predict_var is not None
+        assert tensorflow_model.tf_input_var is not None
