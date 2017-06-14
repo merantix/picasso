@@ -12,7 +12,8 @@ VGG16_DIM = (224, 224, 3)
 
 class KerasVGG16Model(KerasModel):
 
-    def preprocess(self, targets):
+    @staticmethod
+    def preprocess(targets):
         image_arrays = []
         for target in targets:
             im = target.resize(VGG16_DIM[:2], Image.ANTIALIAS)
@@ -23,7 +24,8 @@ class KerasVGG16Model(KerasModel):
         all_targets = np.array(image_arrays)
         return preprocess_input(all_targets)
 
-    def postprocess(self, output_arr):
+    @staticmethod
+    def postprocess(output_arr):
         images = []
         for row in output_arr:
             im_array = row.reshape(VGG16_DIM[:2])
@@ -31,7 +33,8 @@ class KerasVGG16Model(KerasModel):
 
         return images
 
-    def prob_decode(self, probability_array, top=5):
+    @staticmethod
+    def prob_decode(probability_array, top=5):
         r = decode_predictions(probability_array, top=top)
         results = [
             [{'code': entry[0],

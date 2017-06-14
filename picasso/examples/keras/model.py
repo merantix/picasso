@@ -10,12 +10,13 @@ MNIST_DIM = (28, 28)
 
 class KerasMNISTModel(KerasModel):
 
-    def preprocess(self, targets):
+    @staticmethod
+    def preprocess(targets):
         """Turn images into computation inputs
 
-        Converts an iterable of PIL Images into a suitably-sized numpy array which
-        can be used as an input to the evaluation portion of the Keras/tensorflow
-        graph.
+        Converts an iterable of PIL Images into a suitably-sized numpy
+        array which can be used as an input to the evaluation portion
+        of the Keras/tensorflow graph.
 
         Args:
             targets (list of Images): a list of PIL Image objects
@@ -36,16 +37,17 @@ class KerasMNISTModel(KerasModel):
                                    MNIST_DIM[0],
                                    MNIST_DIM[1], 1).astype('float32') / 255
 
-    def postprocess(self, output_arr):
+    @staticmethod
+    def postprocess(output_arr):
         """Reshape arrays to original image dimensions
 
-        Typically used for outputs or computations on intermediate layers which
-        make sense to represent as an image in the original dimension of the input
-        images (see ``SaliencyMaps``).
+        Typically used for outputs or computations on intermediate
+        layers which make sense to represent as an image in the original
+        dimension of the input images (see ``SaliencyMaps``).
 
         Args:
-            output_arr (array of float32): Array of leading dimension n containing
-                n arrays to be reshaped
+            output_arr (array of float32): Array of leading dimension n
+                containing n arrays to be reshaped
 
         Returns:
             reshaped array
@@ -58,7 +60,8 @@ class KerasMNISTModel(KerasModel):
 
         return images
 
-    def prob_decode(self, probability_array, top=5):
+    @staticmethod
+    def prob_decode(probability_array, top=5):
         """Provide class information from output probabilities
 
         Gives the visualization additional context for the computed class
