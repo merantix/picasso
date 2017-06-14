@@ -93,7 +93,7 @@ class TestKerasModel:
         km = KerasModel()
         km.load(temp)
 
-        assert km.tf_predict_var is not None
+        assert km.TF_PREDICT_VAR is not None
 
 
 from picasso.ml_frameworks.tensorflow.model import TFModel

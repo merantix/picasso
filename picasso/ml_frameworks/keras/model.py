@@ -16,9 +16,9 @@ class KerasModel(BaseModel):
     Attributes:
         sess (Tensorflow :obj:`Session`): underlying Tensorflow session of
             the Keras model.
-        tf_predict_var (:obj:`Tensor`): tensorflow tensor which represents
+        TF_PREDICT_VAR (:obj:`Tensor`): tensorflow tensor which represents
             the class probabilities
-        tf_input_var (:obj:`Tensor`): tensorflow tensor which represents
+        TF_INPUT_VAR (:obj:`Tensor`): tensorflow tensor which represents
             the inputs
     """
 
@@ -65,8 +65,8 @@ class KerasModel(BaseModel):
 
         self.sess = K.get_session()
 
-        self.tf_predict_var = self.model.outputs[0]
-        self.tf_input_var = self.model.inputs[0]
+        self.TF_PREDICT_VAR = self.model.outputs[0]
+        self.TF_INPUT_VAR = self.model.inputs[0]
 
     def _predict(self, input_array):
         return self.model.predict(input_array)
