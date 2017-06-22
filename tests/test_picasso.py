@@ -103,6 +103,10 @@ class TestRestAPI:
         response = client.get(url_for('api_images'))
         assert response.status_code == 200
 
+    def test_end_session(self, client):
+        response = client.get(url_for('end_session'))
+        assert response.status_code == 200
+
 
 class TestBaseModel:
 
