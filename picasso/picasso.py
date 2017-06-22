@@ -87,6 +87,7 @@ ml_backend = \
 ml_backend.load(app.config['DATA_DIR'])
 
 
+@app.before_request
 def initialize_new_session():
     if 'image_uid_counter' in session and 'image_list' in session:
         app.logger.debug('images are already being tracked')
@@ -161,7 +162,6 @@ def api_root():
     displays a hello world message.
 
     """
-    initialize_new_session()
     return jsonify(hello='world')
 
 
@@ -174,7 +174,6 @@ def api_images():
     TODO: return file URL instead of filename
 
     """
-    initialize_new_session()
     if request.method == 'POST':
         file_upload = request.files['file']
         if file_upload:
@@ -197,7 +196,6 @@ def api_images():
 
 @app.route('/api/visualize', methods=['GET'])
 def api_visualize():
-    initialize_new_session()
     session['settings'] = {}
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
@@ -233,7 +231,6 @@ def landing():
     render file selection.
 
     """
-    initialize_new_session()
     if request.method == 'POST':
         session['vis_name'] = request.form.get('choice')
         vis = get_visualizations()[session['vis_name']]
@@ -262,7 +259,6 @@ def visualization_settings():
     attribute.
 
     """
-    initialize_new_session()
     if request.method == 'POST':
         vis = get_visualizations()[session['vis_name']]
         return render_template('settings.html',
@@ -283,7 +279,6 @@ def select_files():
         and `result`.
 
     """
-    initialize_new_session()
     if 'file[]' in request.files:
         vis = get_visualizations()[session['vis_name']]
         inputs = []
@@ -343,7 +338,6 @@ def select_files():
 @app.route('/inputs/<filename>')
 def download_inputs(filename):
     """For serving input images"""
-    initialize_new_session()
     return send_from_directory(session['img_input_dir'],
                                filename)
 
@@ -351,7 +345,6 @@ def download_inputs(filename):
 @app.route('/outputs/<filename>')
 def download_outputs(filename):
     """For serving output images"""
-    initialize_new_session()
     return send_from_directory(session['img_output_dir'],
                                filename)
 
