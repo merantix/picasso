@@ -29,6 +29,7 @@ import os
 import io
 import time
 import inspect
+import shutil
 from operator import itemgetter
 from tempfile import mkdtemp
 from importlib import import_module
@@ -101,7 +102,6 @@ def initialize_new_session():
         # make image upload directory
         session['img_input_dir'] = mkdtemp()
         session['img_output_dir'] = mkdtemp()
-
 
 def get_visualizations():
     """Get visualization classes in context
@@ -219,6 +219,14 @@ def api_visualize():
                                     output_dir=session['img_output_dir'],
                                     settings=session['settings'])
     return jsonify(output=output)
+
+
+@app.route('/api/reset', methods=['GET'])
+def end_session():
+    shutil.rmtree(session['img_input_dir'])
+    shutil.rmtree(session['img_output_dir'])
+    session.clear()
+    return jsonify(ok='true')
 
 
 @app.route('/', methods=['GET', 'POST'])
