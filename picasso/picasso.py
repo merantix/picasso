@@ -47,6 +47,7 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 from picasso import app
+from picasso import __version__
 from picasso.ml_frameworks.model import generate_model
 from picasso.visualizations import BaseVisualization
 from picasso.visualizations import *
@@ -90,6 +91,12 @@ ml_backend.load(app.config['DATA_DIR'])
 
 @app.before_request
 def initialize_new_session():
+    """Check session and initialize if necessary
+
+    Before every request, check the user session.  If no session exists, add
+    one and provide temporary locations for images
+
+    """
     if 'image_uid_counter' in session and 'image_list' in session:
         app.logger.debug('images are already being tracked')
     else:
@@ -162,7 +169,10 @@ def api_root():
     displays a hello world message.
 
     """
-    return jsonify(hello='world')
+    return jsonify(message='Picasso {version}. '
+                   'Developer documentation coming soon!'
+                   .format(version=__version__),
+                  version=__version__)
 
 
 @app.route('/api/images', methods=['POST', 'GET'])
@@ -196,6 +206,13 @@ def api_images():
 
 @app.route('/api/visualize', methods=['GET'])
 def api_visualize():
+    """Trigger a visualization via the REST API
+
+    Takes a single image and generates the visualization data, returning the
+    output exactly as given by the target visualization.
+
+    """
+
     session['settings'] = {}
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
@@ -223,6 +240,9 @@ def api_visualize():
 
 @app.route('/api/reset', methods=['GET'])
 def end_session():
+    """Delete the session and clear temporary directories
+
+    """
     shutil.rmtree(session['img_input_dir'])
     shutil.rmtree(session['img_output_dir'])
     session.clear()
