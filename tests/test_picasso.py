@@ -8,6 +8,8 @@ test_picasso
 Tests for `picasso` module.
 """
 import os
+import io
+import json
 
 from flask import url_for
 import pytest
@@ -61,6 +63,49 @@ class TestWebApp:
                                    filename=os.path.split(str(path))[-1])
         rv = client.post(url_for('select_files'), data=builder.files)
         assert rv.status_code == 200
+
+
+class TestRestAPI:
+    from picasso.picasso import VISUALIZATON_CLASSES
+
+    def test_api_root_get(self, client):
+        assert client.get(url_for('api_root')).status_code == 200
+
+    def test_api_uploading_file(self, client, random_image_files):
+        upload_file = str(random_image_files.listdir()[0])
+        with open(upload_file, "rb") as imageFile:
+            f = imageFile.read()
+            b = bytearray(f)
+        data = {}
+        data['file'] = (io.BytesIO(b), 'test.png')
+        response = client.post(url_for('api_images'), data=data)
+        data = json.loads(response.get_data(as_text=True))
+        assert data['ok'] == 'true'
+        assert type(data['file']) is str
+        assert type(data['uid']) is int
+
+    @pytest.mark.parametrize("vis", VISUALIZATON_CLASSES)
+    def test_api_visualizing_input(self, client, random_image_files, vis):
+        upload_file = str(random_image_files.listdir()[0])
+        with open(upload_file, "rb") as imageFile:
+            f = imageFile.read()
+            b = bytearray(f)
+        data = {}
+        data['file'] = (io.BytesIO(b), 'test.png')
+        upl_response = client.post(url_for('api_images'), data=data)
+        upl_data = json.loads(upl_response.get_data(as_text=True))
+        response = client.get(url_for('api_visualize') + '?visualizer=' +
+                              vis.__name__ +
+                              '&image=' + str(upl_data['uid']))
+        assert response.status_code == 200
+
+    def test_listing_images(self, client):
+        response = client.get(url_for('api_images'))
+        assert response.status_code == 200
+
+    def test_end_session(self, client):
+        response = client.get(url_for('end_session'))
+        assert response.status_code == 200
 
 
 class TestBaseModel:
