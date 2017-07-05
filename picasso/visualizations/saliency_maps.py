@@ -8,7 +8,7 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot
 
-from picasso.visualizations import BaseVisualization
+from picasso.visualizations.base import BaseVisualization
 
 
 class SaliencyMaps(BaseVisualization):

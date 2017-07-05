@@ -6,7 +6,7 @@ import os
 import keras.backend as K
 from keras.models import model_from_json, load_model
 
-from picasso.ml_frameworks.model import BaseModel
+from picasso.models.base import BaseModel
 
 
 class KerasModel(BaseModel):

@@ -1,8 +1,7 @@
 import numpy as np
 from PIL import Image
 
-from picasso.ml_frameworks.tensorflow.model import TFModel
-
+from picasso.models.tensorflow import TFModel
 
 MNIST_DIM = (28, 28)
 

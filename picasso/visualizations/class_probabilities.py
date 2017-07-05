@@ -1,4 +1,4 @@
-from picasso.visualizations import BaseVisualization
+from picasso.visualizations.base import BaseVisualization
 
 
 class ClassProbabilities(BaseVisualization):

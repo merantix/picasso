@@ -21,18 +21,18 @@ Examples:
 Attributes:
     APP_TITLE (:obj:`str`): Name of the application to display in the
         title bar
-    VISUALIZATON_CLASSES(:obj:`tuple` of :class:`.BaseVisualization`):
+    VISUALIZATION_CLASSES (:obj:`tuple` of :class:`.BaseVisualization`):
         Visualization classes available for rendering.
 
 """
-import os
-import io
-import time
-import inspect
-import shutil
-from operator import itemgetter
-from tempfile import mkdtemp
 from importlib import import_module
+import inspect
+import io
+import os
+from operator import itemgetter
+import shutil
+from tempfile import mkdtemp
+import time
 from types import ModuleType
 
 from PIL import Image
@@ -46,39 +46,50 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from picasso import app
 from picasso import __version__
-from picasso.ml_frameworks.model import load_model
-from picasso.visualizations import BaseVisualization
+from picasso import app
+from picasso.models.base import load_model
 from picasso.visualizations import *
+from picasso.visualizations.base import BaseVisualization
 
 APP_TITLE = 'Picasso Visualizer'
 
-# import visualizations classes dynamically
-visualization_attr = vars(
-    import_module('picasso.visualizations'))
-visualization_submodules = [visualization_attr[x] for x in visualization_attr
-                            if isinstance(visualization_attr[x], ModuleType)]
-VISUALIZATON_CLASSES = []
-for submodule in visualization_submodules:
-    members = vars(submodule)
-    classes = [members[x] for x in members if inspect.isclass(members[x]) and
-               issubclass(members[x], BaseVisualization) and
-               members[x] is not BaseVisualization]
-    VISUALIZATON_CLASSES += classes
 
-# Use a bogus secret key for debugging ease. No
-# client information is stored, the secret key is only
-# necessary for generating the session cookie.
+def _get_visualization_classes():
+    """Import visualizations classes dynamically
+
+    """
+    visualization_attr = vars(
+        import_module('picasso.visualizations'))
+    visualization_submodules = [
+        visualization_attr[x]
+        for x in visualization_attr
+        if isinstance(visualization_attr[x], ModuleType)]
+
+    visualization_classes = []
+    for submodule in visualization_submodules:
+        attrs = vars(submodule)
+        for attr_name in attrs:
+            attr = attrs[attr_name]
+            if (inspect.isclass(attr)
+                and issubclass(attr, BaseVisualization)
+                and attr is not BaseVisualization):
+                visualization_classes.append(attr)
+    return visualization_classes
+
+
+VISUALIZATION_CLASSES = _get_visualization_classes()
+
+# Use a bogus secret key for debugging ease. No client information is stored;
+# the secret key is only necessary for generating the session cookie.
 if app.debug:
     app.secret_key = '...'
 else:
     app.secret_key = os.urandom(24)
 
-# This pattern is used in other projects with Flask and
-# tensorflow, but probably isn't the most stable or
-# safest way.  Would be much better to connect to a
-# persistent tensorflow session running in another process or
+# This pattern is used in other projects with Flask and Tensorflow, but
+# but probably isn't the most stable or safest way.  Would be much better to
+# connect to a persistent Tensorflow session running in another process or
 # machine.
 model = load_model(app.config['MODEL_CLS_PATH'], app.config['MODEL_CLS_NAME'],
                    app.config['MODEL_LOAD_ARGS'])
@@ -111,7 +122,7 @@ def get_model():
     the model in the request context if it is not yet there.
 
     Returns:
-        instance of :class:`.ml_frameworks.model.Model` or derived
+        instance of :class:`.models.model.Model` or derived
         class
     """
     if not hasattr(g, 'model'):
@@ -130,7 +141,7 @@ def get_visualizations():
     """
     if not hasattr(g, 'visualizations'):
         g.visualizations = {}
-        for VisClass in VISUALIZATON_CLASSES:
+        for VisClass in VISUALIZATION_CLASSES:
             vis = VisClass(get_model())
             g.visualizations[vis.__class__.__name__] = vis
 

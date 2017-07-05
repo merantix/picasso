@@ -1,11 +1,8 @@
-from keras.applications.imagenet_utils import (decode_predictions,
-                                               preprocess_input)
-import keras.applications.imagenet_utils
+from keras.applications import imagenet_utils
 import numpy as np
 from PIL import Image
 
-from picasso.ml_frameworks.keras.model import KerasModel
-
+from picasso.models.keras import KerasModel
 
 VGG16_DIM = (224, 224, 3)
 
@@ -27,10 +24,11 @@ class KerasVGG16Model(KerasModel):
             image_arrays.append(arr)
 
         all_raw_inputs = np.array(image_arrays)
-        return preprocess_input(all_raw_inputs)
+        return imagenet_utils.preprocess_input(all_raw_inputs)
 
     def decode_prob(self, class_probabilities):
-        r = decode_predictions(class_probabilities, top=self.top_probs)
+        r = imagenet_utils.decode_predictions(class_probabilities,
+                                              top=self.top_probs)
         results = [
             [{'code': entry[0],
               'name': entry[1],
@@ -38,7 +36,7 @@ class KerasVGG16Model(KerasModel):
              for entry in row]
             for row in r
         ]
-        classes = keras.applications.imagenet_utils.CLASS_INDEX
+        classes = imagenet_utils.CLASS_INDEX
         class_keys = list(classes.keys())
         class_values = list(classes.values())
 

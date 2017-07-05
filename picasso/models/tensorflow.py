@@ -4,7 +4,7 @@ import os
 
 import tensorflow as tf
 
-from picasso.ml_frameworks.model import BaseModel
+from picasso.models.base import BaseModel
 
 
 class TFModel(BaseModel):

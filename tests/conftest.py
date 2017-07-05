@@ -27,7 +27,7 @@ def example_prob_array():
 
 @pytest.fixture
 def base_model():
-    from picasso.ml_frameworks.model import BaseModel
+    from picasso.models.base import BaseModel
     class BaseModelForTest(BaseModel):
         def load(self, data_dir):
             pass
@@ -36,5 +36,5 @@ def base_model():
 
 @pytest.fixture
 def tensorflow_model():
-    from picasso.ml_frameworks.tensorflow.model import TFModel
+    from picasso.models.tensorflow import TFModel
     return TFModel()

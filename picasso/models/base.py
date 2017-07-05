@@ -14,7 +14,7 @@ def load_model(model_cls_path, model_cls_name, model_load_args):
             of the model instance.
 
     Returns:
-        An instance of :class:`.ml_frameworks.model.BaseModel` or subclass
+        An instance of :class:`.models.model.BaseModel` or subclass
 
     """
     spec = importlib.util.spec_from_file_location('active_model',

@@ -13,7 +13,7 @@ if sys.version_info.major < 3 or (sys.version_info.major == 3 and
     raise SystemError('Python 3.5+ required, found {}'.format(sys.version))
 
 app = Flask(__name__)
-app.config.from_object('picasso.settings.Default')
+app.config.from_object('picasso.config.Default')
 
 if os.getenv('PICASSO_SETTINGS'):
     app.config.from_envvar('PICASSO_SETTINGS')

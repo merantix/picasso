@@ -1,8 +1,7 @@
 import numpy as np
 from PIL import Image
 
-from picasso.ml_frameworks.keras.model import KerasModel
-
+from picasso.models.keras import KerasModel
 
 MNIST_DIM = (28, 28)
 
