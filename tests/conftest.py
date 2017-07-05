@@ -28,7 +28,6 @@ def example_prob_array():
 @pytest.fixture
 def base_model():
     from picasso.ml_frameworks.model import BaseModel
-
     class BaseModelForTest(BaseModel):
         def load(self, data_dir):
             pass
@@ -38,8 +37,4 @@ def base_model():
 @pytest.fixture
 def tensorflow_model():
     from picasso.ml_frameworks.tensorflow.model import TFModel
-
-    tfm = TFModel(tf_predict_var='Softmax:0',
-                  tf_input_var='convolution2d_input_1:0')
-
-    return tfm
+    return TFModel()

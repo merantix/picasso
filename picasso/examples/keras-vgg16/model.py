@@ -1,8 +1,8 @@
 from keras.applications.imagenet_utils import (decode_predictions,
                                                preprocess_input)
 import keras.applications.imagenet_utils
-from PIL import Image
 import numpy as np
+from PIL import Image
 
 from picasso.ml_frameworks.keras.model import KerasModel
 
@@ -12,30 +12,25 @@ VGG16_DIM = (224, 224, 3)
 
 class KerasVGG16Model(KerasModel):
 
-    @staticmethod
-    def preprocess(targets):
+    def preprocess(self, raw_inputs):
+        """
+        Args:
+            raw_inputs (list of Images): a list of PIL Image objects
+        Returns:
+            array (float32): num images * height * width * num channels
+        """
         image_arrays = []
-        for target in targets:
-            im = target.resize(VGG16_DIM[:2], Image.ANTIALIAS)
+        for raw_im in raw_inputs:
+            im = raw_im.resize(VGG16_DIM[:2], Image.ANTIALIAS)
             im = im.convert('RGB')
             arr = np.array(im).astype('float32')
             image_arrays.append(arr)
 
-        all_targets = np.array(image_arrays)
-        return preprocess_input(all_targets)
+        all_raw_inputs = np.array(image_arrays)
+        return preprocess_input(all_raw_inputs)
 
-    @staticmethod
-    def postprocess(output_arr):
-        images = []
-        for row in output_arr:
-            im_array = row.reshape(VGG16_DIM[:2])
-            images.append(im_array)
-
-        return images
-
-    @staticmethod
-    def prob_decode(probability_array, top=5):
-        r = decode_predictions(probability_array, top=top)
+    def decode_prob(self, class_probabilities):
+        r = decode_predictions(class_probabilities, top=self.top_probs)
         results = [
             [{'code': entry[0],
               'name': entry[1],
@@ -49,11 +44,7 @@ class KerasVGG16Model(KerasModel):
 
         for result in results:
             for entry in result:
-                entry.update(
-                        {'index':
-                         int(
-                             class_keys[class_values.index([entry['code'],
-                                                            entry['name']])]
-                         )}
-                )
+                entry['index'] = int(
+                    class_keys[class_values.index([entry['code'],
+                                                   entry['name']])])
         return results

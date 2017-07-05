@@ -141,14 +141,16 @@ class TestKerasModel:
         assert km.tf_predict_var is not None
 
 
-class TestTensorflowModel:
+class TestTensorflowBackend:
 
-    def test_tensorflow_model(self, client, tensorflow_model):
+    def test_tensorflow_backend(self, tensorflow_model):
         """Only tests tensorflow backend loads without error
 
         """
-        data_path = os.path.join('picasso', 'examples',
-                                 'tensorflow', 'data-volume')
-        tensorflow_model.load(data_path)
+        tensorflow_model.load(
+            data_dir=os.path.join('picasso', 'examples', 'tensorflow',
+                                  'data-volume'),
+            tf_predict_var='Softmax:0',
+            tf_input_var='convolution2d_input_1:0')
         assert tensorflow_model.tf_predict_var is not None
         assert tensorflow_model.tf_input_var is not None

@@ -48,7 +48,7 @@ from werkzeug.utils import secure_filename
 
 from picasso import app
 from picasso import __version__
-from picasso.ml_frameworks.model import generate_model
+from picasso.ml_frameworks.model import load_model
 from picasso.visualizations import BaseVisualization
 from picasso.visualizations import *
 
@@ -80,17 +80,8 @@ else:
 # safest way.  Would be much better to connect to a
 # persistent tensorflow session running in another process or
 # machine.
-ml_backend = \
-        generate_model(
-            app.config['MODEL_CLS_PATH'],
-            app.config['MODEL_CLS_NAME'],
-            # passes along all settings prefixed with
-            # "BACKEND_" without the prefix, as lowercase
-            **{k.lower()[8:]: v for (k, v)
-               in app.config.items()
-               if k.startswith('BACKEND')}
-        )
-ml_backend.load(app.config['DATA_DIR'])
+model = load_model(app.config['MODEL_CLS_PATH'], app.config['MODEL_CLS_NAME'],
+                   app.config['MODEL_LOAD_ARGS'])
 
 
 @app.before_request
@@ -114,11 +105,23 @@ def initialize_new_session():
         session['img_input_dir'] = mkdtemp()
         session['img_output_dir'] = mkdtemp()
 
-def get_visualizations():
-    """Get visualization classes in context
 
-    Puts the available visualizations in the request context
-    and returns them.
+def get_model():
+    """Get the NN model that's being analyzed from the request context.  Put
+    the model in the request context if it is not yet there.
+
+    Returns:
+        instance of :class:`.ml_frameworks.model.Model` or derived
+        class
+    """
+    if not hasattr(g, 'model'):
+        g.model = model
+    return g.model
+
+
+def get_visualizations():
+    """Get the available visualizations from the request context.  Put the
+    visualizations in the request context if they are not yet there.
 
     Returns:
         :obj:`list` of instances of :class:`.BaseVisualization` or
@@ -128,24 +131,10 @@ def get_visualizations():
     if not hasattr(g, 'visualizations'):
         g.visualizations = {}
         for VisClass in VISUALIZATON_CLASSES:
-            vis = VisClass(get_ml_backend())
+            vis = VisClass(get_model())
             g.visualizations[vis.__class__.__name__] = vis
 
     return g.visualizations
-
-
-def get_ml_backend():
-    """Get machine learning backend in context
-
-    Puts the backend in the request context and returns it.
-
-    Returns:
-        instance of :class:`.ml_frameworks.model.Model` or derived
-        class
-    """
-    if not hasattr(g, 'ml_backend'):
-        g.ml_backend = ml_backend
-    return g.ml_backend
 
 
 def get_app_state():
@@ -156,12 +145,10 @@ def get_app_state():
 
     """
     if not hasattr(g, 'app_state'):
-        model = get_ml_backend()
+        model = get_model()
         g.app_state = {
             'app_title': APP_TITLE,
-            'backend': type(model).__name__,
-            'latest_ckpt_name': model.latest_ckpt_name,
-            'latest_ckpt_time': model.latest_ckpt_time
+            'model_description': model.description,
         }
     return g.app_state
 
@@ -266,29 +253,28 @@ def landing():
     if request.method == 'POST':
         session['vis_name'] = request.form.get('choice')
         vis = get_visualizations()[session['vis_name']]
-        if hasattr(vis, 'settings'):
+        if vis.ALLOWED_SETTINGS:
             return visualization_settings()
         return select_files()
 
     # otherwise, on GET request
     visualizations = get_visualizations()
     vis_desc = [{'name': vis,
-                 'description': visualizations[vis].description}
+                 'description': visualizations[vis].DESCRIPTION}
                 for vis in visualizations]
     session.clear()
     return render_template('select_visualization.html',
                            app_state=get_app_state(),
                            visualizations=sorted(vis_desc,
-                                                 key=itemgetter('name'))
-                           )
+                                                 key=itemgetter('name')))
 
 
 @app.route('/visualization_settings', methods=['POST'])
 def visualization_settings():
     """Visualization settings page
 
-    Will only render if the visualization object has a `settings`
-    attribute.
+    Will only render if the visualization object has a non-null
+    `ALLOWED_SETTINGS` attribute.
 
     """
     if request.method == 'POST':
@@ -296,7 +282,7 @@ def visualization_settings():
         return render_template('settings.html',
                                app_state=get_app_state(),
                                current_vis=session['vis_name'],
-                               settings=vis.settings)
+                               settings=vis.ALLOWED_SETTINGS)
 
 
 @app.route('/select_files', methods=['GET', 'POST'])
@@ -345,8 +331,8 @@ def select_files():
             entry['data'].save(path, 'PNG')
 
         kwargs = {}
-        if hasattr(vis, 'reference_link'):
-            kwargs.update({'reference_link': vis.reference_link})
+        if vis.REFERENCE_LINK:
+            kwargs['reference_link'] = vis.REFERENCE_LINK
 
         return render_template('{}.html'.format(session['vis_name']),
                                inputs=inputs,
