@@ -13,7 +13,7 @@ class ClassProbabilities(BaseVisualization):
 
     def make_visualization(self, inputs, output_dir, settings=None):
         pre_processed_arrays = self.model.preprocess([example['data']
-                                                     for example in inputs])
+                                                      for example in inputs])
         predictions = self.model.sess.run(self.model.tf_predict_var,
                                           feed_dict={self.model.tf_input_var:
                                                      pre_processed_arrays})

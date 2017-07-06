@@ -9,7 +9,7 @@ from picasso.models.base import BaseModel
 
 class TFModel(BaseModel):
     """Implements model loading functions for Tensorflow.
-    
+
     """
 
     def load(self, data_dir, tf_input_var=None, tf_predict_var=None):
@@ -23,9 +23,9 @@ class TFModel(BaseModel):
             tf_input_var (:obj:`str`): Name of the tensor corresponding to the
                 model's inputs.  You must define this if you are loading the
                 model from a checkpoint.
-            tf_predict_var (:obj:`str`): Name of the tensor corresponding to the
-                model's predictions.  You must define this if you are loading
-                the model from a checkpoint.
+            tf_predict_var (:obj:`str`): Name of the tensor corresponding to
+                the model's predictions.  You must define this if you are
+                loading the model from a checkpoint.
 
         """
         # find newest ckpt and meta files

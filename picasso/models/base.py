@@ -78,7 +78,7 @@ class BaseModel:
         """Tensorflow session that can be used to evaluate tensors in the
         model.
 
-        (:obj:`tf.Session`)
+        :type: :obj:`tf.Session`
 
         """
         return self._sess
@@ -87,7 +87,7 @@ class BaseModel:
     def tf_input_var(self):
         """Tensorflow tensor that represents the model's inputs.
 
-        (:obj:`tf.Tensor`)
+        :type: :obj:`tf.Tensor`
 
         """
         return self._tf_input_var
@@ -97,7 +97,7 @@ class BaseModel:
         """Tensorflow tensor that represents the model's predicted class
         probabilities.
 
-        (:obj:`tf.Tensor`)
+        :type: :obj:`tf.Tensor`
 
         """
         return self._tf_predict_var
@@ -107,6 +107,8 @@ class BaseModel:
         """Description of the loaded model.
 
         This description is rendered to the user in the UI.
+
+        :type: str
 
         """
         return self._description
