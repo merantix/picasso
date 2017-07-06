@@ -18,6 +18,10 @@
 		</small>
 	</h1>
 
+  <div>
+		<p><b>Current model:</b> {{ app_state.model_description }}</p>
+  </div>
+
   <div class="info">
     <a href="{{ url_for('landing') }}" class="btn btn-primary" role="button">Start over</a>
   </div>
@@ -27,9 +31,5 @@
   {% block body %}{% endblock %}
 
   <hr/>
-
-  <div class="footer">
-		<p><b>Current model:</b> {{ app_state.model_description }}</p>
-  </div>
 
 </div>
