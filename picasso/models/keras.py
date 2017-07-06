@@ -58,8 +58,8 @@ class KerasModel(BaseModel):
         self._sess = K.get_session()
         self._tf_predict_var = self._model.outputs[0]
         self._tf_input_var = self._model.inputs[0]
-        self._description = "%s loaded from %s (name: %s, timestamp: %s)" % (
-            type(self).__name__, data_dir, latest_ckpt_name, latest_ckpt_time)
+        self._description = "%s loaded from checkpoint w/ filename=%s, timestamp=%s" % (
+            type(self).__name__, latest_ckpt_name, latest_ckpt_time)
 
     def predict(self, input_array):
         return self._model.predict(input_array)
