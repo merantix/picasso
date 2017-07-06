@@ -159,7 +159,9 @@ def get_app_state():
         model = get_model()
         g.app_state = {
             'app_title': APP_TITLE,
-            'model_description': model.description,
+            'model_name': type(model).__name__,
+            'latest_ckpt_name': model.latest_ckpt_name,
+            'latest_ckpt_time': model.latest_ckpt_time
         }
     return g.app_state
 

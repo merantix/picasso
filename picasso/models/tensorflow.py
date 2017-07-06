@@ -67,8 +67,9 @@ class TFModel(BaseModel):
         self._tf_input_var = self._sess.graph.get_tensor_by_name(tf_input_var)
         self._tf_predict_var = self._sess.graph.get_tensor_by_name(
             tf_predict_var)
-        self._description = "%s loaded from checkpoint w/ timestamp=%s" % (
-            type(self).__name__, latest_ckpt_time)
+        self._model_name = type(self).__name__
+        self._latest_ckpt_name = latest_ckpt_fn
+        self._latest_ckpt_time = latest_ckpt_time
 
     def predict(self, input_array):
         return self.sess.run(self.tf_predict_var,

@@ -60,7 +60,9 @@ class BaseModel:
         self._sess = None
         self._tf_input_var = None
         self._tf_predict_var = None
-        self._description = "%s (not yet loaded)" % type(self).__name__
+        self._model_name = None
+        self._latest_ckpt_name = None
+        self._latest_ckpt_time = None
 
     def load(self, *args, **kwargs):
         """Load the model's graph and parameters from disk, restoring the model
@@ -103,15 +105,22 @@ class BaseModel:
         return self._tf_predict_var
 
     @property
-    def description(self):
-        """Description of the loaded model.
-
-        This description is rendered to the user in the UI.
+    def latest_ckpt_time(self):
+        """Timestamp of the latest checkpoint
 
         :type: str
 
         """
-        return self._description
+        return self._latest_ckpt_time
+
+    @property
+    def latest_ckpt_name(self):
+        """Filename of the checkpoint
+
+        :type: str
+
+        """
+        return self._latest_ckpt_name
 
     def preprocess(self, raw_inputs):
         """Preprocess raw inputs into the format required by the model.
