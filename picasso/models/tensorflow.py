@@ -19,7 +19,7 @@ class TFModel(BaseModel):
             data_dir (:obj:`str`): location of tensorflow checkpoint data.
                 We'll need the .meta file to reconstruct the graph and the data
                 (checkpoint) files to fill in the weights of the model.  The
-                default behavior is take the latest files, by OS timestamp.
+                default behavior is to take the latest files, by OS timestamp.
             tf_input_var (:obj:`str`): Name of the tensor corresponding to the
                 model's inputs.  You must define this if you are loading the
                 model from a checkpoint.
