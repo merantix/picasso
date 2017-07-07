@@ -1,4 +1,4 @@
-from picasso.visualizations import BaseVisualization
+from picasso.visualizations.base import BaseVisualization
 
 
 class ClassProbabilities(BaseVisualization):
@@ -9,12 +9,11 @@ class ClassProbabilities(BaseVisualization):
 
     """
 
-    description = 'Predict class probabilities from new examples'
+    DESCRIPTION = 'Predict class probabilities from new examples'
 
-    def make_visualization(self, inputs,
-                           output_dir, settings=None):
+    def make_visualization(self, inputs, output_dir, settings=None):
         pre_processed_arrays = self.model.preprocess([example['data']
-                                                     for example in inputs])
+                                                      for example in inputs])
         predictions = self.model.sess.run(self.model.tf_predict_var,
                                           feed_dict={self.model.tf_input_var:
                                                      pre_processed_arrays})

@@ -12,19 +12,18 @@ We include three `examples`_ for you to try: a model trained on the `MNIST`_ dat
 
 If you built your model with Keras using a `Sequential`_ model, you should be more or less good to go.  If you used Tensorflow, you'll need to manually specify the entry and exit points [#]_.
 
-You can specify the backend (Tensorflow or Keras) using the ``PICASSO_BACKEND_ML`` setting. The allowed values are ``tensorflow`` or ``keras`` (see :doc:`settings`).
-
 Your model data
 ===============
 
-You can specify the data directory with the ``PICASSO_DATA_DIR`` setting. This directory should contain the Keras or Tensorflow checkpoint files.  If multiple checkpoints are found, the latest one will be used (see example `Keras model code`_).
+You can specify the data directory with the ``MODEL_LOAD_ARGS.data_dir`` setting (see :doc:`settings`). This directory should contain the Keras or Tensorflow checkpoint files.  If multiple checkpoints are found, the latest one will be used (see example `Keras model code`_).
 
 Utility functions
 =================
 
 In addition to the graph and weight information of the model itself, you'll need to define a few functions to help the visualization interact with user input, and interpret raw output from your computational graph.  These are arbitrary python functions, and their locations can be specified in the :doc:`settings`.
 
-We'll draw from the `Keras MNIST example`_ for this guide.
+We'll draw from the `Keras MNIST example`_ for this guide.  All custom models
+from the relevant model: either ``KerasModel`` or ``TensorflowModel``.
 
 Preprocessor
 ------------
@@ -33,39 +32,29 @@ The preprocessor takes images uploaded to the webapp and converts them into arra
 
 .. code-block:: python3
 
+   import numpy as np
+   from PIL import Image
+   
+   from picasso.models.keras import KerasModel
+
    MNIST_DIM = (28, 28)
 
-   def preprocess(targets):
-       image_arrays = []
-       for target in targets:
-           im = target.convert('L')
-           im = im.resize(MNIST_DIM, Image.ANTIALIAS)
-           arr = np.array(im)
-           image_arrays.append(arr)
+   class KerasMNISTModel(KerasModel):
 
-       all_targets = np.array(image_arrays)
-       return all_targets.reshape(len(all_targets),
-                                  MNIST_DIM[0],
-                                  MNIST_DIM[1], 1).astype('float32') / 255
+       def preprocess(self, raw_inputs):
+           image_arrays = []
+           for target in targets:
+               im = target.convert('L')
+               im = im.resize(MNIST_DIM, Image.ANTIALIAS)
+               arr = np.array(im)
+               image_arrays.append(arr)
+
+           all_targets = np.array(image_arrays)
+           return all_targets.reshape(len(all_targets),
+                                      MNIST_DIM[0],
+                                      MNIST_DIM[1], 1).astype('float32') / 255
 
 Specifically, we have to convert an arbitrary input color image to a float array of the input size specified with ``MNIST_DIM``.
-
-Postprocessor
--------------
-
-For some visualizations, it's useful to convert a flat representation back into an array with the same shape as the original image.
-
-.. code-block:: python3
-
-   def postprocess(output_arr):
-       images = []
-       for row in output_arr:
-           im_array = row.reshape(MNIST_DIM)
-           images.append(im_array)
-
-       return images
-
-This therefore takes an arbitrary array (with the same number of total entries as the image array) and reshapes it back.
 
 Class Decoder
 -------------
@@ -74,24 +63,27 @@ Class probabilities are usually returned in an array.  For any visualization whe
 
 .. code-block:: python3
 
-   def prob_decode(probability_array, top=5):
-       results = []
-       for row in probability_array:
-           entries = []
-           for i, prob in enumerate(row):
-               entries.append({'index': i,
-                               'name': str(i),
-                               'prob': prob})
+   class KerasMNISTModel(KerasModel):
 
-           entries = sorted(entries,
-                            key=itemgetter('prob'),
-                            reverse=True)[:top]
+       ...
+       
+       def decode_prob(self, class_probabilities):
+           results = []
+           for row in class_probabilities:
+               entries = []
+               for i, prob in enumerate(row):
+                   entries.append({'index': i,
+                                   'name': str(i),
+                                   'prob': prob})
 
-           for entry in entries:
-               entry['prob'] = '{:.3f}'.format(entry['prob'])
-           results.append(entries)
+               entries = sorted(entries,
+                                key=itemgetter('prob'),
+                                reverse=True)[:self.top_probs]
 
-       return results
+               for entry in entries:
+                   entry['prob'] = '{:.3f}'.format(entry['prob'])
+               results.append(entries)
+           return results
 
 ``results`` is then a list of dicts in the format ``[{'index': class_index, 'name': class_name, 'prob': class_probability}, ...]``. In the case of the MNIST dataset, the index is the same as the class name (digits 0-9).
 
@@ -103,9 +95,9 @@ Class probabilities are usually returned in an array.  For any visualization whe
 
 .. _Sequential: https://keras.io/models/sequential/
 
-.. _Keras model code: https://github.com/merantix/picasso/blob/master/picasso/ml_frameworks/keras/model.py
+.. _Keras model code: https://github.com/merantix/picasso/blob/master/picasso/keras/keras.py
 
-.. _Keras MNIST example: https://github.com/merantix/picasso/blob/master/picasso/examples/keras/util.py
+.. _Keras MNIST example: https://github.com/merantix/picasso/blob/master/picasso/examples/keras/model.py
 
 .. _PIL Image: http://pillow.readthedocs.io/en/latest/reference/Image.html
 

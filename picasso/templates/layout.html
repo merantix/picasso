@@ -17,7 +17,7 @@
 		</small>
 	</h1>
   <div class=info>
-		<h4><b>Current backend:</b> {{ app_state.backend }}</h4>
+		<h4><b>Current backend:</b> {{ app_state.model_name }}</h4>
     {% if app_state.latest_ckpt_name is defined %}
 		<h4><b>Current checkpoint:</b> {{ app_state.latest_ckpt_name }}</h4>
     {% endif %}
