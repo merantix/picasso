@@ -12,3 +12,4 @@ Contributors
 
 * XdpAreKid <2161220107@email.szu.edu.cn>
 * Jan Steinke <jan.steinke@gmail.com>
+* Josh Chen <josh@merantix.com>

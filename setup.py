@@ -54,7 +54,7 @@ docs_require = [
 
 setup(
     name='picasso_viz',
-    version='v0.1.2',
+    version='v0.2.0',
     description="A CNN model visualizer",
     long_description=readme + '\n\n' + history,
     author="Ryan Henderson",
