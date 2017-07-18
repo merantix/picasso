@@ -5,7 +5,7 @@ Picasso allows you since v0.2.0 to call parts of its functionality via an API. T
 
 Currently the session is stored in a cookie to allow reuse of uploaded images and separate the user space on the server.
 
-
+All files referenced in the API can be directly accessed via ``/inputs/<filename>`` and ``/outputs/<filename>``.
 
 
 GET /api/
@@ -83,7 +83,7 @@ output:
 GET /api/visualize
 ###################
 
-this endpoint needs to at least 2 arguments (``image=X`` and ``visualizer=Y``) in the querry string.
+this endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string.
 
 .. code-block:: bash
 
@@ -135,7 +135,3 @@ output:
       }
     ]
   }
-
-
-All files referenced in the API can be directly accessed via the already existing URLs:
-`/inputs/<filename>` and `/outputs/<filename>`
