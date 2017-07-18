@@ -11,6 +11,7 @@ Contents:
    models
    settings
    Modules <source/modules>
+   api
    contributing
    authors
    history
