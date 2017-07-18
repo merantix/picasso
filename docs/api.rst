@@ -3,6 +3,7 @@ API
 ========
 Picasso allows you since v0.2.0 to call parts of its functionality via an API. The API is intended to be RESTful and provides responses as JSON. The following chapter gives you an inside in how to use that API.
 
+Currently the session is stored in a cookie to allow reuse of uploaded images and separate the user space on the server.
 
 
 
