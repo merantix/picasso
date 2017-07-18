@@ -1,6 +1,7 @@
 ========
 API
 ========
+Picasso allows you since v0.2.0 to call parts of its functionality via an API. The API is intended to be RESTful and provides responses as JSON. The following chapter gives you an inside in how to use that API.
 
 ```GET /api/```: right now it is only a placeholder. It could potentially be used to start a session to authenticate user and to display the API version.
 cmd: ```curl "localhost:5000/api/"```
