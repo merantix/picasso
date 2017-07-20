@@ -1,0 +1,21 @@
+{% extends "result.html" %}
+{% block vis %}
+<table class="table table-sm table-striped">
+	<tbody>
+		{% for result in results %}
+			<tr>
+				<td align="center"><b>{{ result.filename }}</b></td>
+					<td align="center"><b>{{ result.filename  }}</b></td>
+			</tr>
+			<tr>
+				<td align="center">
+					<img src="inputs/{{ result.filename }}" style="width:{{ result.width_multiple }}px;height:244px;"/>
+				</td>
+					<td align="center">
+						<img src="outputs/{{ result.output_filename }}" style="width:{{ result.width_multiple }}px;height:244px;"/>
+					</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+  </table>
+{% endblock %}
