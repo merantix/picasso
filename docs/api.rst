@@ -1,7 +1,7 @@
 ========
 API
 ========
-Picasso allows you since v0.2.0 to call parts of its functionality via an API. The API is intended to be RESTful and provides responses as JSON. The following chapter gives you an inside in how to use that API.
+Since v0.2.0, Picasso allows you to call parts of its functionality via an API. The API is intended to be RESTful and provides responses as JSON. The following chapter gives you some insight on how to use the API.
 
 Currently the session is stored in a cookie to allow reuse of uploaded images and separate the user space on the server.
 
@@ -11,14 +11,13 @@ All files referenced in the API can be directly accessed via ``/inputs/<filename
 GET /api/
 #########
 
-right now it is only a placeholder. It could potentially be used to start a session to authenticate user and to display the API version.
-cmd:
+Right now this is only a placeholder. It could potentially be used to start a session to authenticate a user and to display the API version.
 
 .. code-block:: bash
 
   curl "localhost:5000/api/"
 
-output:
+Output:
 
 .. code-block:: json
 
@@ -33,13 +32,13 @@ output:
 POST /api/images
 ################
 
-upload an image. It returns the filename and a UID in JSON
+Upload an image. It returns the filename and a UID in JSON
 
 .. code-block:: bash
 
   curl -F "file=@/path/to/image.png" localhost:5000/api/images -b /path/to/cookie -c /path/to/cookie
 
-output:
+Output:
 
 .. code-block:: json
 
@@ -54,13 +53,13 @@ output:
 
 GET /api/images
 ###############
-lists all images uploaded via this API
+List all images uploaded via this API
 
 .. code-block:: bash
 
   curl "localhost:5000/api/images" -b /path/to/cookie -c /path/to/cookie
 
-output:
+Output:
 
 .. code-block:: json
 
@@ -83,7 +82,7 @@ output:
 GET /api/visualize
 ###################
 
-this endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string.
+This endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string.
 
 .. code-block:: bash
 
