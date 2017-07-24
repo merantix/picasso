@@ -174,7 +174,8 @@ def api_root():
 
     """
     return jsonify(message='Picasso {version}. '
-                   'Developer documentation coming soon!'
+                   'See API documentation at: '
+                   'https://picasso.readthedocs.io/en/latest/api.html'
                    .format(version=__version__),
                   version=__version__)
 
