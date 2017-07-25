@@ -41,6 +41,7 @@ class SaliencyMaps(BaseVisualization):
             self.logit_tensor = self.get_logit_tensor()
 
         self.input_shape = self.model.tf_input_var.get_shape()[1:].as_list()
+        self.transparency = 0.0
 
     def get_gradient_wrt_class(self, class_index):
         gradient_name = 'bv_{class_index}_gradient'.format(
