@@ -93,16 +93,18 @@ class SaliencyMaps(BaseVisualization):
             output_images = output_arrays.reshape([-1] + self.input_shape[0:2])
 
             output_fns = []
+            pyplot.clf()
             for j, output_image in enumerate(output_images):
                 output_fn = '{fn}-{j}-{ts}.png'.format(ts=str(time.time()),
                                                        j=j,
                                                        fn=inp['filename'])
 
-                if i == 0 and j == 0:
+                if j == 0:
                     pyplot.imshow(inputs[i]['data']
                                   .resize(output_image.shape)
                                   .convert('RGB'),
                                   alpha=self.transparency)
+
                     im = pyplot.imshow(output_image,
                                        alpha=1. - self.transparency,
                                        cmap='inferno')
