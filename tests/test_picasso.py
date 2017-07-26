@@ -52,8 +52,6 @@ class TestWebApp:
             if hasattr(vis, 'settings'):
                 sess['settings'] = {key: vis.settings[key][0]
                                     for key in vis.settings}
-            else:
-                sess['settings'] = {}
 
         # random images
         builder = EnvironBuilder(path=url_for('select_files'), method='POST')

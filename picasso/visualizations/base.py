@@ -41,6 +41,14 @@ class BaseVisualization:
         return self._model
 
     def update_settings(self, settings):
+        """Update the settings
+
+        If a derived class has an ALLOWED_SETTINGS dict, we check here that
+        incoming settings from the web app are allowed, and set the child
+        properties as appropriate.
+
+        """
+
         def error_string(setting, setting_val):
             return ('{val} is not an acceptable value for '
                     'parameter {param} for visualization'
@@ -56,7 +64,7 @@ class BaseVisualization:
                 # see:
                 #
                 # https://stackoverflow.com/questions/3303312/how-do-i-convert-a-string-to-a-valid-variable-name-in-python
-                setattr(self, re.sub('\W|^(?=\d)', '_', setting),
+                setattr(self, '_' + re.sub('\W|^(?=\d)', '_', setting),
                         settings[setting])
             else:
                 raise ValueError(error_string(settings[setting], setting))

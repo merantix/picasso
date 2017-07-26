@@ -64,13 +64,11 @@ class PartialOcclusion(BaseVisualization):
         self.occlusion_value = 255
         self.initial_resize = (244, 244)
 
-    def make_visualization(self, inputs, output_dir, settings=None):
-        if settings:
-            self.update_settings(settings)
-            if self.occlusion_method == 'black':
-                self.occlusion_value = 0
-            elif self.occlusion_method == 'grey':
-                self.occlusion_value = 128
+    def make_visualization(self, inputs, output_dir):
+        if self.occlusion_method == 'black':
+            self.occlusion_value = 0
+        elif self.occlusion_method == 'grey':
+            self.occlusion_value = 128
 
         # get class predictions as in ClassProbabilities
         pre_processed_arrays = self.model.preprocess([example['data']
