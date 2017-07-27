@@ -7,6 +7,7 @@ __version__ = 'v0.2.0'
 from flask import Flask
 import os
 import sys
+from picasso.interfaces.rest import api
 
 if sys.version_info.major < 3 or (sys.version_info.major == 3 and
                                   sys.version_info.minor < 5):
@@ -14,6 +15,7 @@ if sys.version_info.major < 3 or (sys.version_info.major == 3 and
 
 app = Flask(__name__)
 app.config.from_object('picasso.config.Default')
+app.register_blueprint(api, url_prefix='/api')
 
 if os.getenv('PICASSO_SETTINGS'):
     app.config.from_envvar('PICASSO_SETTINGS')
