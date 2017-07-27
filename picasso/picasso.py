@@ -332,6 +332,7 @@ def select_files():
             inputs.append(entry)
 
         start_time = time.time()
+        vis.update_settings(session['settings'])
         output = vis.make_visualization(inputs,
                                         output_dir=session['img_output_dir'])
         duration = '{:.2f}'.format(time.time() - start_time, 2)

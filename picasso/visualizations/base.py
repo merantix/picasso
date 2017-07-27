@@ -31,6 +31,11 @@ class BaseVisualization:
         """
         self._model = model
 
+        # give default settings
+        if self.ALLOWED_SETTINGS:
+            self.update_settings({setting: self.ALLOWED_SETTINGS[setting][0]
+                                  for setting in self.ALLOWED_SETTINGS})
+
     @property
     def model(self):
         """NN model to be visualized.
@@ -64,7 +69,7 @@ class BaseVisualization:
                 # see:
                 #
                 # https://stackoverflow.com/questions/3303312/how-do-i-convert-a-string-to-a-valid-variable-name-in-python
-                setattr(self, '_' + re.sub('\W|^(?=\d)', '_', setting),
+                setattr(self, '_' + re.sub('\W|^(?=\d)', '_', setting).lower(),
                         settings[setting])
             else:
                 raise ValueError(error_string(settings[setting], setting))

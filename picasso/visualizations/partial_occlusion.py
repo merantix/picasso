@@ -35,25 +35,14 @@ class PartialOcclusion(BaseVisualization):
 
     @property
     def window(self):
-        self._window = 0.10
-        return self._window
-
-    @window.setter
-    def window(self, val):
-        self._window = float(val)
+        return float(self._window)
 
     @property
     def num_windows(self):
-        self._strides = 20
-        return self._strides
-
-    @num_windows.setter
-    def num_windows(self, val):
         return int(self._strides)
 
     @property
     def occlusion_method(self):
-        self._occlusion = 'white'
         return self._occlusion
 
     def __init__(self, model):
