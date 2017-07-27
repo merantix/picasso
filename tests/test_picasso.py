@@ -17,18 +17,18 @@ from werkzeug.test import EnvironBuilder
 
 
 class TestWebApp:
-    from picasso.picasso import VISUALIZATION_CLASSES
+    from picasso.helper import Helper
 
     def test_landing_page_get(self, client):
         assert client.get(url_for('landing')).status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", Helper._get_visualization_classes())
     def test_landing_page_post(self, client, vis):
         rv = client.post(url_for('landing'),
                          data=dict(choice=vis.__name__))
         assert rv.status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", Helper._get_visualization_classes())
     def test_settings_page(self, client, vis):
         if hasattr(vis, 'settings'):
             with client.session_transaction() as sess:
@@ -36,14 +36,14 @@ class TestWebApp:
             rv = client.post(url_for('visualization_settings'))
             assert rv.status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", Helper._get_visualization_classes())
     def test_file_selection_get(self, client, vis):
         with client.session_transaction() as sess:
             sess['vis_name'] = vis.__name__
         rv = client.get(url_for('select_files'))
         assert rv.status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", Helper._get_visualization_classes())
     def test_file_selection_post(self, client, vis, random_image_files):
         with client.session_transaction() as sess:
             sess['vis_name'] = vis.__name__
@@ -66,7 +66,7 @@ class TestWebApp:
 
 
 class TestRestAPI:
-    from picasso.picasso import VISUALIZATION_CLASSES
+    from picasso.helper import Helper
 
     def test_api_root_get(self, client):
         assert client.get(url_for('api_root')).status_code == 200
@@ -84,7 +84,7 @@ class TestRestAPI:
         assert type(data['file']) is str
         assert type(data['uid']) is int
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", Helper._get_visualization_classes())
     def test_api_visualizing_input(self, client, random_image_files, vis):
         upload_file = str(random_image_files.listdir()[0])
         with open(upload_file, "rb") as imageFile:

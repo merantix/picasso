@@ -25,19 +25,15 @@ Attributes:
         Visualization classes available for rendering.
 
 """
-from importlib import import_module
-import inspect
 import io
 import os
 from operator import itemgetter
 import shutil
 from tempfile import mkdtemp
 import time
-from types import ModuleType
 
 from PIL import Image
 from flask import (
-    g,
     render_template,
     request,
     session,
@@ -50,35 +46,8 @@ from picasso import __version__
 from picasso import app
 from picasso.models.base import load_model
 from picasso.visualizations import *
-from picasso.visualizations.base import BaseVisualization
+from picasso.helper import Helper
 
-APP_TITLE = 'Picasso Visualizer'
-
-
-def _get_visualization_classes():
-    """Import visualizations classes dynamically
-
-    """
-    visualization_attr = vars(
-        import_module('picasso.visualizations'))
-    visualization_submodules = [
-        visualization_attr[x]
-        for x in visualization_attr
-        if isinstance(visualization_attr[x], ModuleType)]
-
-    visualization_classes = []
-    for submodule in visualization_submodules:
-        attrs = vars(submodule)
-        for attr_name in attrs:
-            attr = attrs[attr_name]
-            if (inspect.isclass(attr)
-                and issubclass(attr, BaseVisualization)
-                and attr is not BaseVisualization):
-                visualization_classes.append(attr)
-    return visualization_classes
-
-
-VISUALIZATION_CLASSES = _get_visualization_classes()
 
 # Use a bogus secret key for debugging ease. No client information is stored;
 # the secret key is only necessary for generating the session cookie.
@@ -115,55 +84,6 @@ def initialize_new_session():
         # make image upload directory
         session['img_input_dir'] = mkdtemp()
         session['img_output_dir'] = mkdtemp()
-
-
-def get_model():
-    """Get the NN model that's being analyzed from the request context.  Put
-    the model in the request context if it is not yet there.
-
-    Returns:
-        instance of :class:`.models.model.Model` or derived
-        class
-    """
-    if not hasattr(g, 'model'):
-        g.model = model
-    return g.model
-
-
-def get_visualizations():
-    """Get the available visualizations from the request context.  Put the
-    visualizations in the request context if they are not yet there.
-
-    Returns:
-        :obj:`list` of instances of :class:`.BaseVisualization` or
-        derived class
-
-    """
-    if not hasattr(g, 'visualizations'):
-        g.visualizations = {}
-        for VisClass in VISUALIZATION_CLASSES:
-            vis = VisClass(get_model())
-            g.visualizations[vis.__class__.__name__] = vis
-
-    return g.visualizations
-
-
-def get_app_state():
-    """Get current status of application in context
-
-    Returns:
-        :obj:`dict` of application status
-
-    """
-    if not hasattr(g, 'app_state'):
-        model = get_model()
-        g.app_state = {
-            'app_title': APP_TITLE,
-            'model_name': type(model).__name__,
-            'latest_ckpt_name': model.latest_ckpt_name,
-            'latest_ckpt_time': model.latest_ckpt_time
-        }
-    return g.app_state
 
 
 @app.route('/api/', methods=['GET'])
@@ -221,7 +141,7 @@ def api_visualize():
     session['settings'] = {}
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
-    vis = get_visualizations()[vis_name]
+    vis = Helper.get_visualizations()[vis_name]
     if hasattr(vis, 'settings'):
         for key in vis.settings.keys():
             if request.args.get(key) is not None:
@@ -266,19 +186,19 @@ def landing():
     """
     if request.method == 'POST':
         session['vis_name'] = request.form.get('choice')
-        vis = get_visualizations()[session['vis_name']]
+        vis = Helper.get_visualizations()[session['vis_name']]
         if vis.ALLOWED_SETTINGS:
             return visualization_settings()
         return select_files()
 
     # otherwise, on GET request
-    visualizations = get_visualizations()
+    visualizations = Helper.get_visualizations()
     vis_desc = [{'name': vis,
                  'description': visualizations[vis].DESCRIPTION}
                 for vis in visualizations]
     session.clear()
     return render_template('select_visualization.html',
-                           app_state=get_app_state(),
+                           app_state=Helper.get_app_state(),
                            visualizations=sorted(vis_desc,
                                                  key=itemgetter('name')))
 
@@ -292,9 +212,9 @@ def visualization_settings():
 
     """
     if request.method == 'POST':
-        vis = get_visualizations()[session['vis_name']]
+        vis = Helper.get_visualizations()[session['vis_name']]
         return render_template('settings.html',
-                               app_state=get_app_state(),
+                               app_state=Helper.get_app_state(),
                                current_vis=session['vis_name'],
                                settings=vis.ALLOWED_SETTINGS)
 
@@ -312,7 +232,7 @@ def select_files():
 
     """
     if 'file[]' in request.files:
-        vis = get_visualizations()[session['vis_name']]
+        vis = Helper.get_visualizations()[session['vis_name']]
         inputs = []
         for file_obj in request.files.getlist('file[]'):
             entry = {}
@@ -353,7 +273,7 @@ def select_files():
                                results=output,
                                current_vis=session['vis_name'],
                                settings=session['settings'],
-                               app_state=get_app_state(),
+                               app_state=Helper.get_app_state(),
                                duration=duration,
                                **kwargs)
 
@@ -362,7 +282,7 @@ def select_files():
     if 'choice' in session['settings']:
         session['settings'].pop('choice')
     return render_template('select_files.html',
-                           app_state=get_app_state(),
+                           app_state=Helper.get_app_state(),
                            current_vis=session['vis_name'],
                            settings=session['settings'])
 
@@ -383,9 +303,9 @@ def download_outputs(filename):
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('500.html', app_state=get_app_state()), 500
+    return render_template('500.html', app_state=Helper.get_app_state()), 500
 
 
 @app.errorhandler(404)
 def not_found_error(e):
-    return render_template('404.html', app_state=get_app_state()), 404
+    return render_template('404.html', app_state=Helper.get_app_state()), 404
