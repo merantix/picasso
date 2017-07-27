@@ -27,7 +27,7 @@ class SaliencyMaps(BaseVisualization):
     REFERENCE_LINK = 'https://arxiv.org/pdf/1312.6034'
 
     def __init__(self, model, logit_tensor_name=None):
-        super(SaliencyMaps, self).__init__(model)
+        super().__init__(model)
         if logit_tensor_name:
             self.logit_tensor = self.model.sess.graph.get_tensor_by_name(
                 logit_tensor_name)
