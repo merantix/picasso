@@ -34,7 +34,7 @@ class PartialOcclusion(BaseVisualization):
     }
 
     def __init__(self, model):
-        super(PartialOcclusion, self).__init__(model)
+        super().__init__(model)
         self.predict_tensor = self.get_predict_tensor()
 
         self.window = 0.10
