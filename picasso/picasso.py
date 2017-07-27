@@ -237,7 +237,8 @@ def api_visualize():
             entry['filename'] = image['filename']
             entry['data'] = Image.open(full_path)
             inputs.append(entry)
-    vis.update_settings(session['settings'])
+    if 'settings' in session:
+        vis.update_settings(session['settings'])
     output = vis.make_visualization(inputs,
                                     output_dir=session['img_output_dir'])
     return jsonify(output=output)
@@ -332,7 +333,8 @@ def select_files():
             inputs.append(entry)
 
         start_time = time.time()
-        vis.update_settings(session['settings'])
+        if 'settings' in session:
+            vis.update_settings(session['settings'])
         output = vis.make_visualization(inputs,
                                         output_dir=session['img_output_dir'])
         duration = '{:.2f}'.format(time.time() - start_time, 2)
