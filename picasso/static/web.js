@@ -12,6 +12,7 @@ $("document").ready(function() {
                 visItems += '<option>'+ visualization.name +'</option>';
             });
             vis_select.append(visItems)
+            vis_select.change()
         }
     });
 
