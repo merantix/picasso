@@ -5,20 +5,14 @@
     <div class="form-group">
         <label for="fileupload">Select input images</label>
         <input type="file" name="file[]" multiple="" id="fileupload">
-        <p class="help-block">Image types only, please.  Will be resized to CNN input
-            shape.</p>
-        <label class="btn btn-primary">
-            Upload <input type="submit" value="Upload" style="display: none;">
-        </label>
-    </div>
-</form>
-<form name="choice" action="" method="POST">
-    <div class="form-group">
+        <p class="help-block">Image types only, please.  Will be resized to CNN input shape.
+        </p>
         <label for="vis-select">Available visualizations</label>
         <select class="form-control" name="choice" id="vis-select"></select>
-    </div>
-    <div class="form-group">
-        <button class="btn btn-primary btn-block" type="submit">Go!</button>
+        <div class="form-group col-xs-2">
+            <ul id="settings-list"></ul>
+        </div>
+            <input type="submit" id="visualize-input">
     </div>
 </form>
 {% endblock %}
