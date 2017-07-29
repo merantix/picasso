@@ -2,7 +2,6 @@ $("document").ready(function() {
 
     var vis_select = $('#vis-select');
     var settings_list = $('#settings-list');
-    var visItems = "";
 
     function getVisualizers() {
         return $.ajax({
@@ -19,6 +18,7 @@ $("document").ready(function() {
     }
 
     getVisualizers().done(function(data) {
+        var visItems = "";
         $.each(data.visualizers, function(i, visualization) {
             visItems += '<option>'+ visualization.name +'</option>';
         });
