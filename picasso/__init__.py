@@ -8,6 +8,7 @@ from flask import Flask
 import os
 import sys
 from picasso.interfaces.rest import API
+from picasso.interfaces.web import frontend
 
 if sys.version_info.major < 3 or (sys.version_info.major == 3 and
                                   sys.version_info.minor < 5):
@@ -16,6 +17,7 @@ if sys.version_info.major < 3 or (sys.version_info.major == 3 and
 app = Flask(__name__)
 app.config.from_object('picasso.config.Default')
 app.register_blueprint(API, url_prefix='/api')
+app.register_blueprint(frontend, url_prefix='/v2')
 
 if os.getenv('PICASSO_SETTINGS'):
     app.config.from_envvar('PICASSO_SETTINGS')
