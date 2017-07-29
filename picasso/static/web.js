@@ -15,7 +15,7 @@ $("document").ready(function() {
         }
     });
 
-    $('#vis-select').on('change', function() {
+    vis_select.on('change', function() {
         var optionItems = "";
         var selected_vis = this.options[this.selectedIndex].text;
         settings_list.empty();
