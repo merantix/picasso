@@ -74,6 +74,19 @@ def images():
         return jsonify(images=session['image_list'])
 
 
+@API.route('/visualizers', methods=['GET'])
+def visualizers():
+    """Get a list of available visualizers
+
+    Responses with a JSON list of available visualizers
+
+    """
+    list_of_visualizers = []
+    for visualizer in get_visualizations():
+        list_of_visualizers.append({'name': visualizer})
+    return jsonify(visualizers=list_of_visualizers)
+
+
 @API.route('/visualize', methods=['GET'])
 def visualize():
     """Trigger a visualization via the REST API

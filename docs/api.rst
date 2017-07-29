@@ -79,6 +79,35 @@ Output:
 
 
 
+GET /api/visualizers
+###############
+List all available visualizers
+
+.. code-block:: bash
+
+  curl "localhost:5000/api/visualizers" -b /path/to/cookie -c /path/to/cookie
+
+Output:
+
+.. code-block:: json
+
+  {
+    "visualizers": [
+      {
+        "name": "ClassProbabilities"
+      },
+      {
+        "name": "PartialOcclusion"
+      },
+      {
+        "name": "SaliencyMaps"
+      }
+    ]
+  }
+
+
+
+
 GET /api/visualize
 ###################
 
