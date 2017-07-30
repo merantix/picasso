@@ -33,7 +33,7 @@ $("document").ready(function() {
         settings_list.empty();
         getVisualizerSettings(selected_vis).done(function(data) {
             $.each(data.settings, function(setting, options) {
-                optionItems += '<li>' + setting + '<select class="form-control" id=' + setting + '-setting></select></li>';
+                optionItems += setting + '<select class="form-control" id=' + setting + '-setting></select>';
             });
             settings_list.append(optionItems);
 
