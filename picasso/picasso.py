@@ -26,9 +26,7 @@ Attributes:
 
 """
 import io
-import os
 from operator import itemgetter
-import shutil
 from tempfile import mkdtemp
 import time
 
@@ -37,12 +35,9 @@ from flask import (
     render_template,
     request,
     session,
-    send_from_directory,
-    jsonify
+    send_from_directory
 )
-from werkzeug.utils import secure_filename
 
-from picasso import __version__
 from picasso import app
 from picasso.models.base import load_model
 from picasso.visualizations import *
