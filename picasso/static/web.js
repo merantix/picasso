@@ -1,7 +1,9 @@
 $("document").ready(function() {
 
-    var vis_select = $('#vis-select');
-    var settings_list = $('#settings-list');
+    var select_vis = $('#select_vis');
+    var div_settings_list = $('#div_settings_list');
+    var button_visualize = $('#button_visualize');
+    var input_file_upload = $('#input_file_upload');
 
     function getVisualizers() {
         return $.ajax({
@@ -17,12 +19,30 @@ $("document").ready(function() {
         });
     }
 
+    function postFile(event) {
+        return $.ajax({
+            type: 'POST',
+            url: '/api/images',
+            data: new FormData($('form')[0]),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                console.log(data)
+            },
+            error: function(err) {
+                console.log(err),
+                alert('error: ('+ err.status + ') ' + err.statusText)
+            },
+        });
+    }
+
     function loadVisualizerSettings(visualizerSettings) {
         var settingItems = '';
         $.each(visualizerSettings, function(setting, options) {
             settingItems += setting + '<select class="form-control" id=' + setting + '-setting></select>';
         });
-        settings_list.append(settingItems);
+        div_settings_list.append(settingItems);
     }
 
     function loadVisualizerOptions(visualizerSettings) {
@@ -40,18 +60,24 @@ $("document").ready(function() {
         $.each(data.visualizers, function(i, visualization) {
             visItems += '<option>'+ visualization.name +'</option>';
         });
-        vis_select.append(visItems)
-        vis_select.change()
+        select_vis.append(visItems)
+        select_vis.change()
     });
 
-    vis_select.on('change', function() {
+    select_vis.on('change', function() {
         var selected_vis = this.options[this.selectedIndex].text;
         var visualizerSettings;
-        settings_list.empty();
+        div_settings_list.empty();
         getVisualizerSettings(selected_vis).done(function(data) {
             selected_vis_settings = data.settings;
             loadVisualizerSettings(selected_vis_settings);
             loadVisualizerOptions(selected_vis_settings);
         });
     });
+
+    button_visualize.on('click', function() {
+        postFile().done(function(data) {
+            // do something when done
+        })
+    })
 });
