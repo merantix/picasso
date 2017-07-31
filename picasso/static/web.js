@@ -18,7 +18,7 @@ $("document").ready(function() {
     }
 
     function loadVisualizerSettings(visualizerSettings) {
-        var settingItems;
+        var settingItems = '';
         $.each(visualizerSettings, function(setting, options) {
             settingItems += setting + '<select class="form-control" id=' + setting + '-setting></select>';
         });
@@ -27,7 +27,7 @@ $("document").ready(function() {
 
     function loadVisualizerOptions(visualizerSettings) {
         $.each(visualizerSettings, function(setting, options) {
-            var optionItems;
+            var optionItems = '';
             $.each(options, function(i, option) {
                 optionItems += '<option>'+ option + '</option>';
             })
