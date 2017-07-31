@@ -60,7 +60,7 @@ Our visualization should actually do something.  It's just going to compute the 
 
        DESCRIPTION = 'A fun visualization!'
 
-       def make_visualization(self, inputs, output_dir, settings=None):
+       def make_visualization(self, inputs, output_dir):
            pre_processed_arrays = self.model.preprocess([example['data']
                                                         for example in inputs])
            predictions = self.model.sess.run(self.model.tf_predict_var,
@@ -83,7 +83,7 @@ Let's go line by line:
    class FunViz(BaseVisualization):
        ...
 
-       def make_visualization(self, inputs, output_dir, settings=None):
+       def make_visualization(self, inputs, output_dir):
            pre_processed_arrays = self.model.preprocess([example['data']
                                                         for example in inputs])
            ...
@@ -98,7 +98,7 @@ Let's go line by line:
    class FunViz(BaseVisualization):
        ...
 
-       def make_visualization(self, inputs, output_dir, settings=None):
+       def make_visualization(self, inputs, output_dir):
            pre_processed_arrays = self.model.preprocess([example['data']
                                                         for example in inputs])
            predictions = self.model.sess.run(self.model.tf_predict_var,
@@ -116,7 +116,7 @@ Here's where we actually do some computation to be used in the visualization. No
    class FunViz(BaseVisualization):
        ...
 
-       def make_visualization(self, inputs, output_dir, settings=None):
+       def make_visualization(self, inputs, output_dir):
            pre_processed_arrays = self.model.preprocess([example['data']
                                                         for example in inputs])
            predictions = self.model.sess.run(self.model.tf_predict_var,
@@ -135,7 +135,7 @@ Here's where we actually do some computation to be used in the visualization. No
    class FunViz(BaseVisualization):
        ...
 
-       def make_visualization(self, inputs, output_dir, settings=None):
+       def make_visualization(self, inputs, output_dir):
            pre_processed_arrays = self.model.preprocess([example['data']
                                                         for example in inputs])
            predictions = self.model.sess.run(self.model.tf_predict_var,
@@ -310,7 +310,7 @@ Add some settings
 Maybe we'd like the user to be able to limit the number of classes shown.  We can easily do this by adding an ``ALLOWED_SETTINGS`` property to the ``FunViz`` class.
 
 .. code-block:: python3
-   :emphasize-lines: 6, 20
+   :emphasize-lines: 6, 10-12, 24
 
    from picasso.visualizations import BaseVisualization
 
@@ -320,6 +320,10 @@ Maybe we'd like the user to be able to limit the number of classes shown.  We ca
        ALLOWED_SETTINGS = {'Display': ['1', '2', '3']}
 
        DESCRIPTION = 'A fun visualization!'
+
+       @property
+       def display(self):
+           return int(self._display)
 
        def make_visualization(self, inputs, output_dir, settings=None):
            pre_processed_arrays = self.model.preprocess([example['data']
@@ -331,8 +335,10 @@ Maybe we'd like the user to be able to limit the number of classes shown.  We ca
            results = []
            for i, inp in enumerate(inputs):
                results.append({'input_file_name': inp['filename'],
-                               'predict_probs': filtered_predictions[i][:int(settings['Display'])]})
+                               'predict_probs': filtered_predictions[i][:self.display})
            return results
+
+The ``ALLOWED_SETTINGS`` dict tells the web app what to display on the settings page.  The names of these settings will be turned into lowercase properties preceeded by an underscore.  Thus, "Display" becomes ``_display``.  You should implement a property function to cast the string to the correct type.
 
 A page to select the settings will automatically be generated.
 
