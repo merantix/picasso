@@ -26,6 +26,7 @@ Attributes:
 
 """
 import io
+import os
 from operator import itemgetter
 from tempfile import mkdtemp
 import time
