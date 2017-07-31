@@ -33,24 +33,31 @@ class PartialOcclusion(BaseVisualization):
         'Occlusion': ['grey', 'black', 'white']
     }
 
+    @property
+    def window(self):
+        return float(self._window)
+
+    @property
+    def num_windows(self):
+        return int(self._strides)
+
+    @property
+    def occlusion_method(self):
+        return self._occlusion
+
     def __init__(self, model):
         super().__init__(model)
         self.predict_tensor = self.get_predict_tensor()
 
-        self.window = 0.10
-        self.num_windows = 20
         self.grid_percent = 0.01
-        self.occlusion_method = 'white'
         self.occlusion_value = 255
         self.initial_resize = (244, 244)
 
-    def make_visualization(self, inputs, output_dir, settings=None):
-        if settings:
-            self.update_settings(settings)
-            if self.occlusion_method == 'black':
-                self.occlusion_value = 0
-            elif self.occlusion_method == 'grey':
-                self.occlusion_value = 128
+    def make_visualization(self, inputs, output_dir):
+        if self.occlusion_method == 'black':
+            self.occlusion_value = 0
+        elif self.occlusion_method == 'grey':
+            self.occlusion_value = 128
 
         # get class predictions as in ClassProbabilities
         pre_processed_arrays = self.model.preprocess([example['data']
@@ -100,33 +107,6 @@ class PartialOcclusion(BaseVisualization):
         # tensor in the computation graph
         return self.model.sess.graph.get_tensor_by_name(
             self.model.tf_predict_var.name)
-
-    def update_settings(self, settings):
-        def error_string(setting, setting_val):
-            return ('{val} is not an acceptable value for '
-                    'parameter {param} for visualization'
-                    '{vis}.').format(val=setting_val,
-                                     param=setting,
-                                     vis=self.__class__.__name__)
-
-        if 'Window' in settings:
-            if settings['Window'] in self.ALLOWED_SETTINGS['Window']:
-                self.window = float(settings['Window'])
-            else:
-                raise ValueError(error_string(settings['Window'], 'Window'))
-
-        if 'Strides' in settings:
-            if settings['Strides'] in self.ALLOWED_SETTINGS['Strides']:
-                self.num_windows = int(settings['Strides'])
-            else:
-                raise ValueError(error_string(settings['Strides'], 'Strides'))
-
-        if 'Occlusion' in settings:
-            if settings['Occlusion'] in self.ALLOWED_SETTINGS['Occlusion']:
-                self.occlusion_method = settings['Occlusion']
-            else:
-                raise ValueError(error_string(settings['Occlusion'],
-                                              'Occlusion'))
 
     def make_heatmaps(self, predictions,
                       output_dir, filename,

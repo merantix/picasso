@@ -92,9 +92,9 @@ def visualize():
             entry['filename'] = image['filename']
             entry['data'] = Image.open(full_path)
             inputs.append(entry)
-    output = vis.make_visualization(inputs,
-                                    output_dir=session['img_output_dir'],
-                                    settings=session['settings'])
+    if 'settings' in session:
+        vis.update_settings(session['settings'])
+    output = vis.make_visualization(inputs, output_dir=session['img_output_dir'])
     return jsonify(output=output)
 
 
