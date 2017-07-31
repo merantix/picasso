@@ -46,7 +46,10 @@ from picasso import __version__
 from picasso import app
 from picasso.models.base import load_model
 from picasso.visualizations import *
-from picasso.helper import Helper
+from picasso.utils import (
+    get_app_state,
+    get_visualizations
+)
 
 
 # Use a bogus secret key for debugging ease. No client information is stored;
@@ -98,19 +101,19 @@ def landing():
     """
     if request.method == 'POST':
         session['vis_name'] = request.form.get('choice')
-        vis = Helper.get_visualizations()[session['vis_name']]
+        vis = get_visualizations()[session['vis_name']]
         if vis.ALLOWED_SETTINGS:
             return visualization_settings()
         return select_files()
 
     # otherwise, on GET request
-    visualizations = Helper.get_visualizations()
+    visualizations = get_visualizations()
     vis_desc = [{'name': vis,
                  'description': visualizations[vis].DESCRIPTION}
                 for vis in visualizations]
     session.clear()
     return render_template('select_visualization.html',
-                           app_state=Helper.get_app_state(),
+                           app_state=get_app_state(),
                            visualizations=sorted(vis_desc,
                                                  key=itemgetter('name')))
 
@@ -124,9 +127,9 @@ def visualization_settings():
 
     """
     if request.method == 'POST':
-        vis = Helper.get_visualizations()[session['vis_name']]
+        vis = get_visualizations()[session['vis_name']]
         return render_template('settings.html',
-                               app_state=Helper.get_app_state(),
+                               app_state=get_app_state(),
                                current_vis=session['vis_name'],
                                settings=vis.ALLOWED_SETTINGS)
 
@@ -144,7 +147,7 @@ def select_files():
 
     """
     if 'file[]' in request.files:
-        vis = Helper.get_visualizations()[session['vis_name']]
+        vis = get_visualizations()[session['vis_name']]
         inputs = []
         for file_obj in request.files.getlist('file[]'):
             entry = {}
@@ -185,7 +188,7 @@ def select_files():
                                inputs=inputs,
                                results=output,
                                current_vis=session['vis_name'],
-                               app_state=Helper.get_app_state(),
+                               app_state=get_app_state(),
                                duration=duration,
                                **kwargs)
 
@@ -194,7 +197,7 @@ def select_files():
     if 'choice' in session['settings']:
         session['settings'].pop('choice')
     return render_template('select_files.html',
-                           app_state=Helper.get_app_state(),
+                           app_state=get_app_state(),
                            current_vis=session['vis_name'],
                            settings=session['settings'])
 
@@ -215,9 +218,9 @@ def download_outputs(filename):
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('500.html', app_state=Helper.get_app_state()), 500
+    return render_template('500.html', app_state=get_app_state()), 500
 
 
 @app.errorhandler(404)
 def not_found_error(e):
-    return render_template('404.html', app_state=Helper.get_app_state()), 404
+    return render_template('404.html', app_state=get_app_state()), 404

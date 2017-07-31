@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""helper code to provide the Flask server with information
+"""utiltiy code to provide the Flask server with information
 
-This code only provides helper functions.
+This code only provides utility functions to access the backend.
 """
 from types import ModuleType
 from importlib import import_module
@@ -13,82 +13,73 @@ from flask import (
 )
 from picasso.models.base import load_model
 
+APP_TITLE = 'Picasso Visualizer'
 
-class Helper:
-    APP_TITLE = 'Picasso Visualizer'
 
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def _get_visualization_classes():
-        """Import visualizations classes dynamically
-
-        """
-        visualization_attr = vars(
-            import_module('picasso.visualizations'))
-        visualization_submodules = [
-            visualization_attr[x]
-            for x in visualization_attr
-            if isinstance(visualization_attr[x], ModuleType)]
-
-        visualization_classes = []
-        for submodule in visualization_submodules:
-            attrs = vars(submodule)
-            for attr_name in attrs:
-                attr = attrs[attr_name]
-                if (inspect.isclass(attr)
-                    and issubclass(attr, BaseVisualization)
+def _get_visualization_classes():
+    """Import visualizations classes dynamically
+    """
+    visualization_attr = vars(import_module('picasso.visualizations'))
+    visualization_submodules = [
+        visualization_attr[x]
+        for x in visualization_attr
+        if isinstance(visualization_attr[x], ModuleType)]
+    visualization_classes = []
+    for submodule in visualization_submodules:
+        attrs = vars(submodule)
+        for attr_name in attrs:
+            attr = attrs[attr_name]
+            if (inspect.isclass(attr)
+                and issubclass(attr, BaseVisualization)
                     and attr is not BaseVisualization):
-                    visualization_classes.append(attr)
-        return visualization_classes
+                visualization_classes.append(attr)
+    return visualization_classes
 
-    @staticmethod
-    def get_model():
-        """Get the NN model that's being analyzed from the request context.  Put
-        the model in the request context if it is not yet there.
 
-        Returns:
-            instance of :class:`.models.model.Model` or derived
-            class
-        """
-        if not hasattr(g, 'model'):
-            g.model = load_model(current_app.config['MODEL_CLS_PATH'], current_app.config['MODEL_CLS_NAME'],
-                       current_app.config['MODEL_LOAD_ARGS'])
-        return g.model
+def get_model():
+    """Get the NN model that's being analyzed from the request context.  Put
+    the model in the request context if it is not yet there.
 
-    @staticmethod
-    def get_visualizations():
-        """Get the available visualizations from the request context.  Put the
-        visualizations in the request context if they are not yet there.
+    Returns:
+        instance of :class:`.models.model.Model` or derived
+        class
+    """
+    if not hasattr(g, 'model'):
+        g.model = load_model(current_app.config['MODEL_CLS_PATH'], current_app.config['MODEL_CLS_NAME'],
+                             current_app.config['MODEL_LOAD_ARGS'])
+    return g.model
 
-        Returns:
-            :obj:`list` of instances of :class:`.BaseVisualization` or
-            derived class
 
-        """
-        if not hasattr(g, 'visualizations'):
-            g.visualizations = {}
-            for VisClass in Helper._get_visualization_classes():
-                vis = VisClass(Helper.get_model())
-                g.visualizations[vis.__class__.__name__] = vis
+def get_visualizations():
+    """Get the available visualizations from the request context.  Put the
+    visualizations in the request context if they are not yet there.
 
-        return g.visualizations
+    Returns:
+        :obj:`list` of instances of :class:`.BaseVisualization` or
+        derived class
 
-    @staticmethod
-    def get_app_state():
-        """Get current status of application in context
+    """
+    if not hasattr(g, 'visualizations'):
+        g.visualizations = {}
+        for VisClass in _get_visualization_classes():
+            vis = VisClass(get_model())
+            g.visualizations[vis.__class__.__name__] = vis
+    return g.visualizations
 
-        Returns:
-            :obj:`dict` of application status
 
-        """
-        if not hasattr(g, 'app_state'):
-            model = Helper.get_model()
-            g.app_state = {
-                'app_title': Helper.APP_TITLE,
-                'model_name': type(model).__name__,
-                'latest_ckpt_name': model.latest_ckpt_name,
-                'latest_ckpt_time': model.latest_ckpt_time
-            }
-        return g.app_state
+def get_app_state():
+    """Get current status of application in context
+
+    Returns:
+        :obj:`dict` of application status
+
+    """
+    if not hasattr(g, 'app_state'):
+        model = get_model()
+        g.app_state = {
+            'app_title': APP_TITLE,
+            'model_name': type(model).__name__,
+            'latest_ckpt_name': model.latest_ckpt_name,
+            'latest_ckpt_time': model.latest_ckpt_time
+        }
+    return g.app_state

@@ -16,7 +16,7 @@ from flask import (
     request
     )
 from picasso import __version__
-from picasso.helper import Helper
+from picasso.utils import get_visualizations
 
 api = Blueprint('api', __name__)
 
@@ -76,7 +76,7 @@ def visualize():
     session['settings'] = {}
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
-    vis = Helper.get_visualizations()[vis_name]
+    vis = get_visualizations()[vis_name]
     if hasattr(vis, 'settings'):
         for key in vis.settings.keys():
             if request.args.get(key) is not None:
