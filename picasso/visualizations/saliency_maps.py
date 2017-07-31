@@ -50,7 +50,7 @@ class SaliencyMaps(BaseVisualization):
                                 self.model.tf_input_var,
                                 name=gradient_name)[0]
 
-    def make_visualization(self, inputs, output_dir, settings=None):
+    def make_visualization(self, inputs, output_dir):
 
         pre_processed_arrays = self.model.preprocess([example['data']
                                                      for example in inputs])

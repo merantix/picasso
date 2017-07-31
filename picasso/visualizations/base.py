@@ -1,3 +1,6 @@
+import re
+
+
 class BaseVisualization:
     """Interface encapsulating a NN visualization.
 
@@ -28,6 +31,11 @@ class BaseVisualization:
         """
         self._model = model
 
+        # give default settings
+        if self.ALLOWED_SETTINGS:
+            self.update_settings({setting: self.ALLOWED_SETTINGS[setting][0]
+                                  for setting in self.ALLOWED_SETTINGS})
+
     @property
     def model(self):
         """NN model to be visualized.
@@ -36,6 +44,35 @@ class BaseVisualization:
 
         """
         return self._model
+
+    def update_settings(self, settings):
+        """Update the settings
+
+        If a derived class has an ALLOWED_SETTINGS dict, we check here that
+        incoming settings from the web app are allowed, and set the child
+        properties as appropriate.
+
+        """
+
+        def error_string(setting, setting_val):
+            return ('{val} is not an acceptable value for '
+                    'parameter {param} for visualization'
+                    '{vis}.').format(val=setting_val,
+                                     param=setting,
+                                     vis=self.__class__.__name__)
+
+        for setting in settings:
+            if settings[setting] in self.ALLOWED_SETTINGS[setting]:
+                # if the setting is allowed, set the attribute but remove
+                # invalid variable characters
+                #
+                # see:
+                #
+                # https://stackoverflow.com/questions/3303312/how-do-i-convert-a-string-to-a-valid-variable-name-in-python
+                setattr(self, '_' + re.sub('\W|^(?=\d)', '_', setting).lower(),
+                        settings[setting])
+            else:
+                raise ValueError(error_string(settings[setting], setting))
 
     def make_visualization(self, inputs, output_dir, settings=None):
         """Generate the visualization.
