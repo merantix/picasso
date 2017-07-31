@@ -1,16 +1,12 @@
 {% extends "v2/layout.html" %}
 {% block body %}
 <script type=text/javascript src="{{ url_for('static', filename='web.js') }}"></script>
-<form action="{{ url_for('select_files') }}" method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="fileupload">Select input images</label>
-        <input type="file" name="file[]" multiple="" id="fileupload">
-        <p class="help-block">Image types only, please.  Will be resized to CNN input shape.
-        </p>
-        <label for="vis-select">Available visualizations</label>
-        <select class="form-control" name="choice" id="vis-select"></select>
-        <div class="form-group col-xs-2" id="settings-list"></div>
-        <button id="visualize-input" class="btn btn-primary">Submit</button>
-    </div>
-</form>
+<label for="fileupload">Select input images</label>
+<input type="file" name="file[]" multiple id="fileupload">
+<p class="help-block">Image types only, please.  Will be resized to CNN input shape.
+</p>
+<label for="vis-select">Available visualizations</label>
+<select class="form-control" name="choice" id="vis-select"></select>
+<div class="form-group" id="settings-list"></div>
+<button id="visualize-input" class="btn btn-primary">Submit</button>
 {% endblock %}
