@@ -8,13 +8,11 @@ from flask import (
     render_template,
     Blueprint
     )
-from picasso.utils import get_app_state
 
 frontend = Blueprint('frontend', __name__)
 
 
 @frontend.route('/')
 def index():
-    return render_template('v2/index.html',
-                           app_state=get_app_state())
+    return render_template('v2/index.html')
 
