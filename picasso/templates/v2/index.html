@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "v2/layout.html" %}
 {% block body %}
 <script type=text/javascript src="{{ url_for('static', filename='web.js') }}"></script>
 <form action="{{ url_for('select_files') }}" method="POST" enctype="multipart/form-data">
@@ -10,7 +10,7 @@
         <label for="vis-select">Available visualizations</label>
         <select class="form-control" name="choice" id="vis-select"></select>
         <div class="form-group col-xs-2" id="settings-list"></div>
-        <input type="submit" id="visualize-input">
+        <button id="visualize-input" class="btn btn-primary">Submit</button>
     </div>
 </form>
 {% endblock %}
