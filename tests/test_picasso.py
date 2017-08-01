@@ -17,18 +17,18 @@ from werkzeug.test import EnvironBuilder
 
 
 class TestWebApp:
-    from picasso.picasso import VISUALIZATION_CLASSES
+    from picasso.utils import _get_visualization_classes
 
     def test_landing_page_get(self, client):
         assert client.get(url_for('landing')).status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_landing_page_post(self, client, vis):
         rv = client.post(url_for('landing'),
                          data=dict(choice=vis.__name__))
         assert rv.status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_settings_page(self, client, vis):
         if hasattr(vis, 'settings'):
             with client.session_transaction() as sess:
@@ -36,14 +36,14 @@ class TestWebApp:
             rv = client.post(url_for('visualization_settings'))
             assert rv.status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_file_selection_get(self, client, vis):
         with client.session_transaction() as sess:
             sess['vis_name'] = vis.__name__
         rv = client.get(url_for('select_files'))
         assert rv.status_code == 200
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_file_selection_post(self, client, vis, random_image_files):
         with client.session_transaction() as sess:
             sess['vis_name'] = vis.__name__
@@ -64,10 +64,10 @@ class TestWebApp:
 
 
 class TestRestAPI:
-    from picasso.picasso import VISUALIZATION_CLASSES
+    from picasso.utils import _get_visualization_classes
 
     def test_api_root_get(self, client):
-        assert client.get(url_for('api_root')).status_code == 200
+        assert client.get(url_for('api.root')).status_code == 200
 
     def test_api_uploading_file(self, client, random_image_files):
         upload_file = str(random_image_files.listdir()[0])
@@ -76,13 +76,13 @@ class TestRestAPI:
             b = bytearray(f)
         data = {}
         data['file'] = (io.BytesIO(b), 'test.png')
-        response = client.post(url_for('api_images'), data=data)
+        response = client.post(url_for('api.images'), data=data)
         data = json.loads(response.get_data(as_text=True))
         assert data['ok'] == 'true'
         assert type(data['file']) is str
         assert type(data['uid']) is int
 
-    @pytest.mark.parametrize("vis", VISUALIZATION_CLASSES)
+    @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_api_visualizing_input(self, client, random_image_files, vis):
         upload_file = str(random_image_files.listdir()[0])
         with open(upload_file, "rb") as imageFile:
@@ -90,19 +90,19 @@ class TestRestAPI:
             b = bytearray(f)
         data = {}
         data['file'] = (io.BytesIO(b), 'test.png')
-        upl_response = client.post(url_for('api_images'), data=data)
+        upl_response = client.post(url_for('api.images'), data=data)
         upl_data = json.loads(upl_response.get_data(as_text=True))
-        response = client.get(url_for('api_visualize') + '?visualizer=' +
+        response = client.get(url_for('api.visualize') + '?visualizer=' +
                               vis.__name__ +
                               '&image=' + str(upl_data['uid']))
         assert response.status_code == 200
 
     def test_listing_images(self, client):
-        response = client.get(url_for('api_images'))
+        response = client.get(url_for('api.images'))
         assert response.status_code == 200
 
     def test_end_session(self, client):
-        response = client.get(url_for('end_session'))
+        response = client.get(url_for('api.reset'))
         assert response.status_code == 200
 
 
