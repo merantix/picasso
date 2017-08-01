@@ -41,7 +41,10 @@ $("document").ready(function() {
         data = {
                 image: image_uid,
                 visualizer: select_vis[0].options[select_vis[0].selectedIndex].text
-            }
+            },
+        $.each(div_settings_list[0].getElementsByClassName('vizSetting'), function(i, j) {
+            data[j.name] = j.options[j.selectedIndex].text
+        })
         return $.ajax({
             type: 'GET',
             url: '/api/visualize',
@@ -62,7 +65,7 @@ $("document").ready(function() {
     function loadVisualizerSettings(visualizerSettings) {
         var settingItems = '';
         $.each(visualizerSettings, function(setting, options) {
-            settingItems += setting + '<select class="form-control" id=' + setting + '-setting></select>';
+            settingItems += setting + '<select name="'+setting+'" class="form-control vizSetting" id=' + setting + '-setting></select>';
         });
         div_settings_list.append(settingItems);
     }
