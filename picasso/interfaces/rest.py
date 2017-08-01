@@ -18,10 +18,10 @@ from flask import (
 from picasso import __version__
 from picasso.utils import get_visualizations
 
-api = Blueprint('api', __name__)
+API = Blueprint('api', __name__)
 
 
-@api.route('/', methods=['GET'])
+@API.route('/', methods=['GET'])
 def root():
     """The root of the REST API
 
@@ -35,7 +35,7 @@ def root():
                    version=__version__)
 
 
-@api.route('/images', methods=['POST', 'GET'])
+@API.route('/images', methods=['POST', 'GET'])
 def images():
     """Upload images via REST interface
 
@@ -64,7 +64,7 @@ def images():
         return jsonify(images=session['image_list'])
 
 
-@api.route('/visualize', methods=['GET'])
+@API.route('/visualize', methods=['GET'])
 def visualize():
     """Trigger a visualization via the REST API
 
@@ -94,11 +94,12 @@ def visualize():
             inputs.append(entry)
     if 'settings' in session:
         vis.update_settings(session['settings'])
-    output = vis.make_visualization(inputs, output_dir=session['img_output_dir'])
+    output = vis.make_visualization(
+        inputs, output_dir=session['img_output_dir'])
     return jsonify(output=output)
 
 
-@api.route('/reset', methods=['GET'])
+@API.route('/reset', methods=['GET'])
 def reset():
     """Delete the session and clear temporary directories
 
