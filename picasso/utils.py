@@ -5,12 +5,12 @@ This code only provides utility functions to access the backend.
 """
 from types import ModuleType
 from importlib import import_module
-from picasso.visualizations.base import BaseVisualization
 import inspect
 from flask import (
     g,
     current_app
 )
+from picasso.visualizations.base import BaseVisualization
 from picasso.models.base import load_model
 
 APP_TITLE = 'Picasso Visualizer'
@@ -45,7 +45,8 @@ def get_model():
         class
     """
     if not hasattr(g, 'model'):
-        g.model = load_model(current_app.config['MODEL_CLS_PATH'], current_app.config['MODEL_CLS_NAME'],
+        g.model = load_model(current_app.config['MODEL_CLS_PATH'],
+                             current_app.config['MODEL_CLS_NAME'],
                              current_app.config['MODEL_LOAD_ARGS'])
     return g.model
 
