@@ -37,6 +37,28 @@ $("document").ready(function() {
         });
     }
 
+    function getVisualize(image_uid) {
+        data = {
+                image: image_uid,
+                visualizer: select_vis[0].options[select_vis[0].selectedIndex].text
+            }
+        return $.ajax({
+            type: 'GET',
+            url: '/api/visualize',
+            data: $.param(data),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                console.log(data)
+            },
+            error: function(err) {
+                console.log(err),
+                alert('error: ('+ err.status + ') ' + err.statusText)
+            },
+        })
+    }
+
     function loadVisualizerSettings(visualizerSettings) {
         var settingItems = '';
         $.each(visualizerSettings, function(setting, options) {
@@ -77,7 +99,7 @@ $("document").ready(function() {
 
     button_visualize.on('click', function() {
         postFile().done(function(data) {
-            // do something when done
+            getVisualize(data.uid);
         })
     })
 });
