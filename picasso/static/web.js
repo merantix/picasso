@@ -4,6 +4,9 @@ $("document").ready(function() {
     var div_settings_list = $('#div_settings_list');
     var button_visualize = $('#button_visualize');
     var input_file_upload = $('#input_file_upload');
+    var div_results = $('#results');
+    var div_input = $('#input');
+    var div_output = $('#output');
 
     function getVisualizers() {
         return $.ajax({
@@ -53,6 +56,8 @@ $("document").ready(function() {
             contentType: false,
             processData: false,
             success: function(data) {
+                div_input.empty()
+                div_input.append('<img src="/inputs/'+ data.output[0].input_file_name+'" style="width:244px;height:244px;"/>')
                 console.log(data)
             },
             error: function(err) {
