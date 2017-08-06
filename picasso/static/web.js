@@ -57,10 +57,10 @@ $("document").ready(function() {
             processData: false,
             success: function(data) {
                 div_input.empty();
-                div_results.empty();
+                div_output.empty();
                 div_input.append('<img src="/inputs/'+ data.output[0].input_file_name+'" style="width:244px;height:244px;"/>');
                 $.each(data.output[0].predict_probs, function(i, j) {
-                    div_results.append('<div>'+ j.name + ' prob:' + j.prob +'</div>');
+                    div_output.append('<div>'+ j.name + ' prob:' + j.prob +'</div>');
                 })
                 console.log(data)
             },
