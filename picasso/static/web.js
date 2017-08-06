@@ -58,6 +58,9 @@ $("document").ready(function() {
             success: function(data) {
                 div_input.empty()
                 div_input.append('<img src="/inputs/'+ data.output[0].input_file_name+'" style="width:244px;height:244px;"/>')
+                $.each(data.output[0].predict_probs, function(i, j) {
+                    div_results.append('<div>'+ j.name + ' prob:' + j.prob +'</div>');
+                })
                 console.log(data)
             },
             error: function(err) {
