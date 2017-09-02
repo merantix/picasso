@@ -87,6 +87,17 @@ def visualizers():
     return jsonify(visualizers=list_of_visualizers)
 
 
+@API.route('/visualizers/<vis_name>', methods=['GET'])
+def visualizers_information(vis_name):
+    vis = get_visualizations()[vis_name]
+    if hasattr(vis, 'ALLOWED_SETTINGS'):
+        settings = vis.ALLOWED_SETTINGS
+    else:
+        settings = {}
+
+    return jsonify(settings=settings)
+
+
 @API.route('/visualize', methods=['GET'])
 def visualize():
     """Trigger a visualization via the REST API

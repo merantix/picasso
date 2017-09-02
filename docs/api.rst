@@ -108,6 +108,54 @@ Output:
 
 
 
+GET /api/visualizers/<vis_name>
+###############
+List all available settings for visualizer ``<viz_name>``
+
+.. code-block:: bash
+
+  curl "localhost:5000/api/visualizers/PartialOcclusion" -b /path/to/cookie -c /path/to/cookie
+
+Output:
+
+.. code-block:: json
+
+  {
+    "settings": {
+      "Occlusion": [
+        "grey",
+        "black",
+        "white"
+      ],
+      "Strides": [
+        "2",
+        "5",
+        "10",
+        "20",
+        "30"
+      ],
+      "Window": [
+        "0.50",
+        "0.40",
+        "0.30",
+        "0.20",
+        "0.10",
+        "0.05"
+      ]
+    }
+  }
+
+returns an empty settings object when no settings available:
+
+.. code-block:: json
+
+  {
+    "settings": {}
+  }
+
+
+
+
 GET /api/visualize
 ###################
 
