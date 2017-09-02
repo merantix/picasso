@@ -95,7 +95,7 @@ output:
   {
     {
     "example_filename": "1496440342.3700328Image.png",
-    "input_filename": "Image.png",
+    "input_file_name": "Image.png",
     "predict_probs": [
     {
     "index": 2,

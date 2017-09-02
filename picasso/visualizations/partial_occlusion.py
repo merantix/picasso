@@ -108,7 +108,7 @@ class PartialOcclusion(BaseVisualization):
             filenames = self.make_heatmaps(
                 predictions, output_dir, example['filename'],
                 decoded_predictions=decoded_predictions[i])
-            results.append({'input_filename': example['filename'],
+            results.append({'input_file_name': example['filename'],
                             'result_filenames': filenames,
                             'predict_probs': decoded_predictions[i],
                             'example_filename': example_filename})
