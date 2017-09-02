@@ -106,7 +106,7 @@ def visualize():
         vis.update_settings(session['settings'])
     output = vis.make_visualization(
         inputs, output_dir=session['img_output_dir'])
-    return jsonify(output=output)
+    return jsonify(output[0])
 
 
 @API.route('/reset', methods=['GET'])

@@ -93,44 +93,42 @@ output:
 .. code-block:: json
 
   {
-    "output": [
-      {
-        "example_filename": "1496440342.3700328Image.png",
-        "input_filename": "Image.png",
-        "predict_probs": [
-          {
-            "index": 2,
-            "name": "2",
-            "prob": "0.769"
-          },
-          {
-            "index": 8,
-            "name": "8",
-            "prob": "0.133"
-          },
-          {
-            "index": 3,
-            "name": "3",
-            "prob": "0.064"
-          },
-          {
-            "index": 7,
-            "name": "7",
-            "prob": "0.012"
-          },
-          {
-            "index": 5,
-            "name": "5",
-            "prob": "0.009"
-          }
-        ],
-        "result_filenames": [
-          "1496440342.43444780_Image.png",
-          "1496440342.6356451_Image.png",
-          "1496440342.8196582_Image.png",
-          "1496440343.0056613_Image.png",
-          "1496440343.1946724_Image.png"
-        ]
-      }
+    {
+    "example_filename": "1496440342.3700328Image.png",
+    "input_filename": "Image.png",
+    "predict_probs": [
+    {
+    "index": 2,
+    "name": "2",
+    "prob": "0.769"
+    },
+    {
+    "index": 8,
+    "name": "8",
+    "prob": "0.133"
+    },
+    {
+    "index": 3,
+    "name": "3",
+    "prob": "0.064"
+    },
+    {
+    "index": 7,
+    "name": "7",
+    "prob": "0.012"
+    },
+    {
+    "index": 5,
+    "name": "5",
+    "prob": "0.009"
+    }
+    ],
+    "result_filenames": [
+    "1496440342.43444780_Image.png",
+    "1496440342.6356451_Image.png",
+    "1496440342.8196582_Image.png",
+    "1496440343.0056613_Image.png",
+    "1496440343.1946724_Image.png"
     ]
+    }
   }
