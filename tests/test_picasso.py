@@ -109,9 +109,11 @@ class TestRestAPI:
         response = client.get(url_for('api.visualize') + '?visualizer=' +
                               vis.__name__ +
                               '&image=' + str(upl_data['uid']))
-        data = json.loads(response.get_data(as_text=True))
+        raw_data = response.get_data(as_text=True)
+        data = json.loads(raw_data)
         assert response.status_code == 200
         assert data['input_file_name']
+        assert data['predict_probs']
 
     def test_listing_images(self, client):
         response = client.get(url_for('api.images'))
