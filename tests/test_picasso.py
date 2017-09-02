@@ -119,6 +119,16 @@ class TestRestAPI:
         response = client.get(url_for('api.reset'))
         assert response.status_code == 200
 
+    def test_visualizers(self, client):
+        response = client.get(url_for('api.visualizers'))
+        assert response.status_code == 200
+
+    @pytest.mark.parametrize("vis", _get_visualization_classes())
+    def test_visualizers_informations(self, client, vis):
+        response = client.get(url_for('api.visualizers_information', vis_name=vis.__name__))
+        assert response.status_code == 200
+
+
 
 class TestBaseModel:
 
