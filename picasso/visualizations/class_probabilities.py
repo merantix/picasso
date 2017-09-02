@@ -33,5 +33,6 @@ class ClassProbabilities(BaseVisualization):
         results = []
         for i, inp in enumerate(inputs):
             results.append({'input_file_name': inp['filename'],
+                            'has_output': False,
                             'predict_probs': filtered_predictions[i]})
         return results

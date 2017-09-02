@@ -109,7 +109,8 @@ class PartialOcclusion(BaseVisualization):
                 predictions, output_dir, example['filename'],
                 decoded_predictions=decoded_predictions[i])
             results.append({'input_file_name': example['filename'],
-                            'result_filenames': filenames,
+                            'has_output': True,
+                            'output_file_names': filenames,
                             'predict_probs': decoded_predictions[i],
                             'example_filename': example_filename})
         return results

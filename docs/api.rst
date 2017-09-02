@@ -123,7 +123,8 @@ output:
     "prob": "0.009"
     }
     ],
-    "result_filenames": [
+    "has_output": true
+    "output_file_names": [
     "1496440342.43444780_Image.png",
     "1496440342.6356451_Image.png",
     "1496440342.8196582_Image.png",
