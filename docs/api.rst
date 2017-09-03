@@ -82,7 +82,14 @@ Output:
 GET /api/visualize
 ###################
 
-This endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string.
+This endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string. Each response is guaranteed to have at least the following attributes:
+
+=======================   ===================== =========
+``input_file_name``       String
+``predict_probs``         List of probabilities
+``has_output``            boolean               if this is ``True`` the output will also have a list ``output_file_names``
+``has_processed_input``   boolean               if this is ``True`` the output will also have an attribute ``processed_input_file_name``
+=======================   ===================== =========
 
 .. code-block:: bash
 
