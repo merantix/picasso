@@ -133,6 +133,7 @@ class SaliencyMaps(BaseVisualization):
             results.append({'input_file_name': inp['filename'],
                             'has_output': True,
                             'predict_probs': decoded_predictions[i],
+                            'has_processed_input': False,
                             'output_file_names': output_fns})
         return results
 

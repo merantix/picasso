@@ -112,7 +112,8 @@ class PartialOcclusion(BaseVisualization):
                             'has_output': True,
                             'output_file_names': filenames,
                             'predict_probs': decoded_predictions[i],
-                            'example_filename': example_filename})
+                            'has_processed_input': True,
+                            'processed_input_file_name': example_filename})
         return results
 
     def get_predict_tensor(self):

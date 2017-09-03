@@ -116,6 +116,8 @@ class TestRestAPI:
         assert data['predict_probs']
         if data['has_output']:
             assert data['output_file_names']
+        if data['has_processed_input']:
+            assert data['processed_input_file_name']
 
     def test_listing_images(self, client):
         response = client.get(url_for('api.images'))
