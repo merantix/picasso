@@ -131,8 +131,10 @@ class SaliencyMaps(BaseVisualization):
                 output_fns.append(output_fn)
 
             results.append({'input_file_name': inp['filename'],
+                            'has_output': True,
                             'predict_probs': decoded_predictions[i],
-                            'gradient_image_names': output_fns})
+                            'has_processed_input': False,
+                            'output_file_names': output_fns})
         return results
 
     def get_logit_tensor(self):

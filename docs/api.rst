@@ -159,7 +159,14 @@ returns an empty settings object when no settings available:
 GET /api/visualize
 ###################
 
-This endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string.
+This endpoint needs at least 2 arguments (``image=X`` and ``visualizer=Y``) in the query string. Each response is guaranteed to have at least the following attributes:
+
+=======================   ===================== =========
+``input_file_name``       String
+``predict_probs``         List of probabilities
+``has_output``            boolean               if this is ``True`` the output will also have a list ``output_file_names``
+``has_processed_input``   boolean               if this is ``True`` the output will also have an attribute ``processed_input_file_name``
+=======================   ===================== =========
 
 .. code-block:: bash
 
@@ -170,44 +177,44 @@ output:
 .. code-block:: json
 
   {
-    "output": [
+    "has_output": true,
+    "has_processed_input": true,
+    "input_file_name": "test.png",
+    "output_file_names": [
+      "1504440185.6014730_test.png",
+      "1504440185.6964661_test.png",
+      "1504440185.7823882_test.png",
+      "1504440185.86981823_test.png",
+      "1504440185.9575094_test.png"
+    ],
+    "predict_probs": [
       {
-        "example_filename": "1496440342.3700328Image.png",
-        "input_filename": "Image.png",
-        "predict_probs": [
-          {
-            "index": 2,
-            "name": "2",
-            "prob": "0.769"
-          },
-          {
-            "index": 8,
-            "name": "8",
-            "prob": "0.133"
-          },
-          {
-            "index": 3,
-            "name": "3",
-            "prob": "0.064"
-          },
-          {
-            "index": 7,
-            "name": "7",
-            "prob": "0.012"
-          },
-          {
-            "index": 5,
-            "name": "5",
-            "prob": "0.009"
-          }
-        ],
-        "result_filenames": [
-          "1496440342.43444780_Image.png",
-          "1496440342.6356451_Image.png",
-          "1496440342.8196582_Image.png",
-          "1496440343.0056613_Image.png",
-          "1496440343.1946724_Image.png"
-        ]
+        "index": 8,
+        "name": "8",
+        "prob": "0.171"
+      },
+      {
+        "index": 6,
+        "name": "6",
+        "prob": "0.125"
+      },
+      {
+        "index": 2,
+        "name": "2",
+        "prob": "0.122"
+      },
+      {
+        "index": 5,
+        "name": "5",
+        "prob": "0.119"
+      },
+      {
+        "index": 0,
+        "name": "0",
+        "prob": "0.098"
       }
-    ]
+    ],
+    "processed_input_file_name": "1504440185.5588531test.png"
   }
+
+
