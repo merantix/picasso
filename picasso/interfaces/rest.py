@@ -26,7 +26,10 @@ from flask import (
     request
     )
 from picasso import __version__
-from picasso.utils import get_visualizations
+from picasso.utils import (
+    get_app_state,
+    get_visualizations
+)
 
 API = Blueprint('api', __name__)
 
@@ -43,6 +46,12 @@ def root():
                    'https://picasso.readthedocs.io/en/latest/api.html'
                    .format(version=__version__),
                    version=__version__)
+
+
+@API.route('/app_state', methods=['GET'])
+def app_state():
+    state = get_app_state()
+    return jsonify(state)
 
 
 @API.route('/images', methods=['POST', 'GET'])
