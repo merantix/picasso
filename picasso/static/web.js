@@ -4,9 +4,9 @@ $("document").ready(function() {
     var div_settings_list = $('#div_settings_list');
     var button_visualize = $('#button_visualize');
     var input_file_upload = $('#input_file_upload');
-    var div_results = $('#results');
-    var div_input = $('#input');
-    var div_output = $('#output');
+    var tbody_results = $('#results');
+    var tr_text_results = $('#text-results');
+    var tr_image_results = $('#image-results');
 
     function getVisualizers() {
         return $.ajax({
@@ -56,11 +56,23 @@ $("document").ready(function() {
             contentType: false,
             processData: false,
             success: function(data) {
-                div_input.empty();
-                div_output.empty();
-                div_input.append('<img src="/inputs/'+ data.input_file_name+'" style="width:244px;height:244px;"/>');
+                tr_text_results.empty();
+                tr_image_results.empty();
+                tr_image_results.append('<td align="center"><img src="/inputs/'+ data.input_file_name+'" style="width:244px;height:244px;"/></td>');
+                if (data.has_processed_input) {
+                    tr_image_results.append('<td align="center"><img src="/outputs/'+ data.processed_input_file_name+'" style="width:244px;height:244px;"/></td>');
+                }
+                if (data.has_output) {
+                    $.each(data.output_file_names, function(i, j) {
+                        tr_image_results.append('<td align="center"><img src="/outputs/'+ j +'" style="width:244px;height:244px;"/></td>');
+                    })
+                }
+                tr_text_results.append('<td align="center"><b>'+ data.input_file_name +'</b></td>')
+                if (data.has_processed_input) {
+                    tr_text_results.append('<td align="center"><b>Processed Image</b></td>')
+                }
                 $.each(data.predict_probs, function(i, j) {
-                    div_output.append('<div>'+ j.name + ' prob:' + j.prob +'</div>');
+                    tr_text_results.append('<td align="center"><b>'+ j.name + ': ' + j.prob +'</b></td>');
                 })
                 console.log(data)
             },
