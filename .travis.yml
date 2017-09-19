@@ -5,6 +5,14 @@ dist: trusty
 language: python
 python: "3.5"
 
+
+addons:
+  chrome: stable
+
+
+before_install:
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   # code below is taken from http://conda.pydata.org/docs/travis.html
