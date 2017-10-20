@@ -83,6 +83,14 @@ class TestRestAPI:
     def test_api_root_get(self, client):
         assert client.get(url_for('api.root')).status_code == 200
 
+    def test_api_get_app_state(self, client):
+        response = client.get(url_for('api.app_state'))
+        data = json.loads(response.get_data(as_text=True))
+        assert data['app_title']
+        assert data['latest_ckpt_name']
+        assert data['latest_ckpt_time']
+        assert data['model_name']
+
     def test_api_uploading_file(self, client, random_image_files):
         upload_file = str(random_image_files.listdir()[0])
         with open(upload_file, "rb") as imageFile:

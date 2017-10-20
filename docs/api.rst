@@ -27,6 +27,33 @@ Output:
   }
 
 
+GET /api/app_state
+################
+
+Get information about the current backend and app information.
+
+=======================   =====================
+``app_title``             Name of the App (e.g. Picasso)
+``model_name``            Name of the model
+``latest_ckpt_name``      Name of the latest model checkpoint
+``latest_ckpt_time``      Time of last update of the model
+=======================   =====================
+
+.. code-block:: bash
+
+  curl localhost:5000/api/app_state -b /path/to/cookie -c /path/to/cookie
+
+Output:
+
+.. code-block:: json
+
+  {
+    "app_title": "Picasso Visualizer",
+    "model_name": "KerasMNISTModel",
+    "latest_ckpt_name": "MNIST-weights.hdf5",
+    "latest_ckpt_time": "2017-05-31 23:29:48"
+  }
+
 
 
 POST /api/images
