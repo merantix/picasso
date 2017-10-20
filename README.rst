@@ -28,13 +28,7 @@ If you use Picasso in your research, `please cite our paper`_:
 
 .. code::
 
-        @misc{picasso2017,
-              Author = {Ryan Henderson and Rasmus Rothe},
-              Title = {Picasso: A Neural Network Visualizer},
-              Year = {2017},
-              Eprint = {arXiv:1705.05627},
-              Url = {https://arxiv.org/abs/1705.05627}
-             }
+        Henderson, R. & Rothe, R., (2017). Picasso: A Modular Framework for Visualizing the Learning Process of Neural Network Image Classifiers. Journal of Open Research Software. 5(1), p.22. 
 
 Quickstart
 ----------
@@ -117,4 +111,4 @@ Credits
 .. _Rasmus: https://github.com/rrothe
 .. _Stefan: https://github.com/knub
 .. _`Medium post`: https://medium.com/merantix/picasso-a-free-open-source-visualizer-for-cnns-d8ed3a35cfc5
-.. _`please cite our paper`: https://arxiv.org/abs/1705.05627
+.. _`please cite our paper`: http://doi.org/10.5334/jors.178
