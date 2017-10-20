@@ -7,6 +7,10 @@ $("document").ready(function() {
     var tbody_results = $('#results');
     var tr_text_results = $('#text-results');
     var tr_image_results = $('#image-results');
+    var a_appstate_title = $('#appstate_title');
+    var div_appstate_backend = $('#appstate_backend');
+    var div_appstate_checkpoint = $('#appstate_checkpoint');
+    var div_appstate_update = $('#appstate_update');
 
     function getVisualizers() {
         return $.ajax({
@@ -19,6 +23,13 @@ $("document").ready(function() {
         return $.ajax({
             type: 'GET',
             url: '/api/visualizers/' + visualizer,
+        });
+    }
+
+    function getAppState() {
+        return $.ajax({
+            type: 'GET',
+            url: '/api/app_state',
         });
     }
 
@@ -100,6 +111,13 @@ $("document").ready(function() {
             $('#'+setting+'-setting').append(optionItems);
         })
     }
+
+    getAppState().done(function(data) {
+        a_appstate_title.text(data.app_title)
+        div_appstate_backend.text(data.model_name)
+        div_appstate_checkpoint.text(data.latest_ckpt_name)
+        div_appstate_update.text(data.latest_ckpt_time)
+    })
 
     getVisualizers().done(function(data) {
         var visItems = "";
