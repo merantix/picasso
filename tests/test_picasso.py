@@ -145,7 +145,6 @@ class TestRestAPI:
         assert response.status_code == 200
 
 
-
 class TestBaseModel:
 
     def test_decode_prob(self, base_model, example_prob_array):
