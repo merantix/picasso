@@ -122,7 +122,7 @@ def visualize():
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
     vis = get_visualizations()[vis_name]
-    if hasattr(vis, 'ALLOWED_SETTINGS'):
+    if vis.ALLOWED_SETTINGS:
         for key in vis.ALLOWED_SETTINGS.keys():
             if request.args.get(key) is not None:
                 session['settings'][key] = request.args.get(key)
