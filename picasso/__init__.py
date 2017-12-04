@@ -17,21 +17,21 @@ if sys.version_info.major < 3 or (sys.version_info.major == 3 and
 
 
 def create_app(debug=False):
-    app = Flask(__name__)
-    app.debug = debug
-    app.config.from_object('picasso.config.Default')
-    app.register_blueprint(API, url_prefix='/api')
-    app.register_blueprint(frontend, url_prefix='/v2')
-    app.register_blueprint(picasso.frontend)
+    _app = Flask(__name__)
+    _app.debug = debug
+    _app.config.from_object('picasso.config.Default')
+    _app.register_blueprint(API, url_prefix='/api')
+    _app.register_blueprint(frontend, url_prefix='/v2')
+    _app.register_blueprint(picasso.frontend)
 
     # Use a bogus secret key for debugging ease. No client information is stored;
     # the secret key is only necessary for generating the session cookie.
-    if app.debug:
-        app.secret_key = '...'
+    if _app.debug:
+        _app.secret_key = '...'
     else:
-        app.secret_key = os.urandom(24)
+        _app.secret_key = os.urandom(24)
 
-    return app
+    return _app
 
 
 app = create_app()
