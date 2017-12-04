@@ -12,15 +12,16 @@
 from PIL import Image
 import numpy as np
 import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 from picasso import create_app
 
 
 @pytest.fixture
 def app():
-    app = create_app()
-    yield app
-    del(app)
+    _app = create_app()
+    return _app
 
 
 @pytest.fixture(scope='session')
@@ -51,3 +52,12 @@ def base_model():
 def tensorflow_model():
     from picasso.models.tensorflow import TFModel
     return TFModel()
+
+
+@pytest.fixture(scope='module')
+def chrome_driver():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome()
+    yield driver
+    driver.quit()
