@@ -13,12 +13,14 @@ from PIL import Image
 import numpy as np
 import pytest
 
-from picasso import app as _app
+from picasso import create_app
 
 
 @pytest.fixture
 def app():
-    return _app
+    app = create_app()
+    yield app
+    del(app)
 
 
 @pytest.fixture(scope='session')

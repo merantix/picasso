@@ -32,11 +32,11 @@ class TestWebApp:
     from picasso.utils import _get_visualization_classes
 
     def test_landing_page_get(self, client):
-        assert client.get(url_for('landing')).status_code == 200
+        assert client.get(url_for('picasso.landing')).status_code == 200
 
     @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_landing_page_post(self, client, vis):
-        rv = client.post(url_for('landing'),
+        rv = client.post(url_for('picasso.landing'),
                          data=dict(choice=vis.__name__))
         assert rv.status_code == 200
 
@@ -45,14 +45,15 @@ class TestWebApp:
         if hasattr(vis, 'settings'):
             with client.session_transaction() as sess:
                 sess['vis_name'] = vis.__name__
-            rv = client.post(url_for('visualization_settings'))
+            rv = client.post(url_for('picasso.visualization_settings'))
             assert rv.status_code == 200
 
     @pytest.mark.parametrize("vis", _get_visualization_classes())
     def test_file_selection_get(self, client, vis):
         with client.session_transaction() as sess:
             sess['vis_name'] = vis.__name__
-        rv = client.get(url_for('select_files'))
+        url = url_for('picasso.select_files')
+        rv = client.get(url)
         assert rv.status_code == 200
 
     @pytest.mark.parametrize("vis", _get_visualization_classes())
@@ -66,12 +67,12 @@ class TestWebApp:
                                     for key in vis.settings}
 
         # random images
-        builder = EnvironBuilder(path=url_for('select_files'), method='POST')
+        builder = EnvironBuilder(path=url_for('picasso.select_files'), method='POST')
         for path in random_image_files.listdir():
             path = str(path)
             builder.files.add_file('file[]', path,
                                    filename=os.path.split(str(path))[-1])
-        rv = client.post(url_for('select_files'), data=builder.files)
+        rv = client.post(url_for('picasso.select_files'), data=builder.files)
         assert rv.status_code == 200
 
 

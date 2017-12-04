@@ -32,15 +32,10 @@ Examples:
 
         $ export PICASSO_SETTINGS=/path/to/the/config.py
 
-Attributes:
-    APP_TITLE (:obj:`str`): Name of the application to display in the
-        title bar
-    VISUALIZATION_CLASSES (:obj:`tuple` of :class:`.BaseVisualization`):
-        Visualization classes available for rendering.
-
 """
 import io
 import os
+import logging
 from operator import itemgetter
 from tempfile import mkdtemp
 import time
@@ -50,10 +45,10 @@ from flask import (
     render_template,
     request,
     session,
-    send_from_directory
-)
+    send_from_directory,
+    Blueprint,
+    current_app)
 
-from picasso import app
 from picasso.models.base import load_model
 from picasso.visualizations import *
 from picasso.utils import (
@@ -61,23 +56,18 @@ from picasso.utils import (
     get_visualizations
 )
 
-
-# Use a bogus secret key for debugging ease. No client information is stored;
-# the secret key is only necessary for generating the session cookie.
-if app.debug:
-    app.secret_key = '...'
-else:
-    app.secret_key = os.urandom(24)
-
 # This pattern is used in other projects with Flask and Tensorflow, but
 # but probably isn't the most stable or safest way.  Would be much better to
 # connect to a persistent Tensorflow session running in another process or
 # machine.
-model = load_model(app.config['MODEL_CLS_PATH'], app.config['MODEL_CLS_NAME'],
-                   app.config['MODEL_LOAD_ARGS'])
+# model = load_model(current_app.config['MODEL_CLS_PATH'], current_app.config['MODEL_CLS_NAME'],
+#                    current_app.config['MODEL_LOAD_ARGS'])
+
+frontend = Blueprint('picasso', __name__)
+logger = logging.getLogger(__name__)
 
 
-@app.before_request
+@frontend.before_request
 def initialize_new_session():
     """Check session and initialize if necessary
 
@@ -86,20 +76,20 @@ def initialize_new_session():
 
     """
     if 'image_uid_counter' in session and 'image_list' in session:
-        app.logger.debug('images are already being tracked')
+        logger.debug('images are already being tracked')
     else:
         # reset image list counter for the session
         session['image_uid_counter'] = 0
         session['image_list'] = []
     if 'img_input_dir' in session and 'img_output_dir' in session:
-        app.logger.debug('temporary image directories already exist')
+        logger.debug('temporary image directories already exist')
     else:
         # make image upload directory
         session['img_input_dir'] = mkdtemp()
         session['img_output_dir'] = mkdtemp()
 
 
-@app.route('/', methods=['GET', 'POST'])
+@frontend.route('/', methods=['GET', 'POST'])
 def landing():
     """Landing page for the application
 
@@ -128,7 +118,7 @@ def landing():
                                                  key=itemgetter('name')))
 
 
-@app.route('/visualization_settings', methods=['POST'])
+@frontend.route('/visualization_settings', methods=['POST'])
 def visualization_settings():
     """Visualization settings page
 
@@ -144,7 +134,7 @@ def visualization_settings():
                                settings=vis.ALLOWED_SETTINGS)
 
 
-@app.route('/select_files', methods=['GET', 'POST'])
+@frontend.route('/select_files', methods=['GET', 'POST'])
 def select_files():
     """File selection and final display of visualization
 
@@ -166,14 +156,14 @@ def select_files():
             # sends the files as bytestreams vs. strings.
             try:
                 entry.update({'data':
-                              Image.open(
-                                  io.BytesIO(file_obj.stream.getvalue())
-                              )})
+                    Image.open(
+                        io.BytesIO(file_obj.stream.getvalue())
+                    )})
             except AttributeError:
                 entry.update({'data':
-                              Image.open(
-                                  io.BytesIO(file_obj.stream.read())
-                              )})
+                    Image.open(
+                        io.BytesIO(file_obj.stream.read())
+                    )})
             inputs.append(entry)
 
         start_time = time.time()
@@ -212,25 +202,25 @@ def select_files():
                            settings=session['settings'])
 
 
-@app.route('/inputs/<filename>')
+@frontend.route('/inputs/<filename>')
 def download_inputs(filename):
     """For serving input images"""
     return send_from_directory(session['img_input_dir'],
                                filename)
 
 
-@app.route('/outputs/<filename>')
+@frontend.route('/outputs/<filename>')
 def download_outputs(filename):
     """For serving output images"""
     return send_from_directory(session['img_output_dir'],
                                filename)
 
 
-@app.errorhandler(500)
+@frontend.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html', app_state=get_app_state()), 500
 
 
-@app.errorhandler(404)
+@frontend.errorhandler(404)
 def not_found_error(e):
     return render_template('404.html', app_state=get_app_state()), 404

@@ -19,7 +19,7 @@ Contributors:
 			</p>
 		{% endfor %}
   {% endif %}
-	<form action="{{ url_for('select_files') }}" method="POST" enctype="multipart/form-data">
+	<form action="{{ url_for('picasso.select_files') }}" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       <label for="fileupload">Select input images</label>
       <input type="file" name="file[]" multiple="" id="fileupload">

@@ -17,6 +17,8 @@ This is used by the main flask application to provide a REST API.
 import os
 import shutil
 import logging
+from tempfile import mkdtemp
+
 from PIL import Image
 from werkzeug.utils import secure_filename
 from flask import (
@@ -34,6 +36,28 @@ from picasso.utils import (
 
 API = Blueprint('api', __name__)
 logger = logging.getLogger(__name__)
+
+
+@API.before_request
+def initialize_new_session():
+    """Check session and initialize if necessary
+
+    Before every request, check the user session.  If no session exists, add
+    one and provide temporary locations for images
+
+    """
+    if 'image_uid_counter' in session and 'image_list' in session:
+        logger.debug('images are already being tracked')
+    else:
+        # reset image list counter for the session
+        session['image_uid_counter'] = 0
+        session['image_list'] = []
+    if 'img_input_dir' in session and 'img_output_dir' in session:
+        logger.debug('temporary image directories already exist')
+    else:
+        # make image upload directory
+        session['img_input_dir'] = mkdtemp()
+        session['img_output_dir'] = mkdtemp()
 
 
 @API.route('/', methods=['GET'])

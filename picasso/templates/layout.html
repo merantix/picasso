@@ -36,7 +36,7 @@ Contributors:
     {% if app_state.latest_ckpt_time is defined %}
 		<h4><b>Last updated:</b> {{ app_state.latest_ckpt_time }}</h4>
     {% endif %}
-    <a href="{{ url_for('landing') }}" class="btn btn-primary" role="button">Start over</a>
+    <a href="{{ url_for('picasso.landing') }}" class="btn btn-primary" role="button">Start over</a>
   </div>
   <hr>
   {% block body %}{% endblock %}
