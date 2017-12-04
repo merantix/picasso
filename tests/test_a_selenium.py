@@ -22,6 +22,7 @@ import pytest
 from flask import url_for
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures('live_server')
 class TestIntegration:
 
