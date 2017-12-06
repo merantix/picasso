@@ -22,13 +22,12 @@ import pytest
 from flask import url_for
 
 
-@pytest.mark.skip
 @pytest.mark.usefixtures('live_server')
 class TestIntegration:
 
-    def test_page_load(self, chrome_driver):
+    def test_page_load(self, webdriver):
         url = url_for('frontend.index', _external=True)
-        chrome_driver.get(url)
-        chrome_driver.find_element_by_id('appstate_checkpoint')
+        webdriver.get(url)
+        webdriver.find_element_by_id('appstate_checkpoint')
 
 

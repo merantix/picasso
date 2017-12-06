@@ -12,8 +12,8 @@
 from PIL import Image
 import numpy as np
 import pytest
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver import Firefox
+from selenium.webdriver.firefox.options import Options
 
 from picasso import create_app
 
@@ -55,9 +55,9 @@ def tensorflow_model():
 
 
 @pytest.fixture(scope='module')
-def chrome_driver():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    driver = webdriver.Chrome()
+def webdriver():
+    options = Options()
+    options.add_argument('-headless')
+    driver = Firefox(firefox_options=options)
     yield driver
     driver.quit()
