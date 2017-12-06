@@ -36,13 +36,11 @@ requirements = [
     'Pillow>=4.0.0',
     'protobuf>=3.2.0',
     'pyparsing>=2.1.10',
-    'pytest-flask==0.10.0',
     'python-dateutil>=2.6.0',
     'pytz>=2016.10',
     'PyYAML>=3.12',
     'requests>=2.13.0',
     'scipy>=0.18.1',
-    'selenium==3.6.0',
     'six>=1.10.0',
     'Werkzeug>=0.11.15',
 ]
@@ -57,6 +55,7 @@ except ImportError:
 test_requirements = [
     'pytest',
     'pytest-flask',
+    'selenium==3.6.0',
 ]
 
 docs_require = [
