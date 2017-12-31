@@ -24,7 +24,7 @@ class TestRestAPI:
         with open(upload_file, "rb") as imageFile:
             f = imageFile.read()
             b = bytearray(f)
-        data = {}
+        data = dict()
         data['file'] = (io.BytesIO(b), 'test.png')
         response = client.post(url_for('api.images'), data=data)
         data = json.loads(response.get_data(as_text=True))
@@ -38,7 +38,7 @@ class TestRestAPI:
         with open(upload_file, "rb") as imageFile:
             f = imageFile.read()
             b = bytearray(f)
-        data = {}
+        data = dict()
         data['file'] = (io.BytesIO(b), 'test.png')
         upl_response = client.post(url_for('api.images'), data=data)
         upl_data = json.loads(upl_response.get_data(as_text=True))
@@ -68,6 +68,6 @@ class TestRestAPI:
         assert response.status_code == 200
 
     @pytest.mark.parametrize("vis", _get_visualization_classes())
-    def test_visualizers_informations(self, client, vis):
+    def test_visualizers_information(self, client, vis):
         response = client.get(url_for('api.visualizers_information', vis_name=vis.__name__))
         assert response.status_code == 200
