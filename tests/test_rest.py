@@ -53,12 +53,19 @@ class TestRestAPI:
         assert data['predict_probs']
         if data['has_output']:
             assert data['output_file_names']
+            i = 1
+            for filename in data['output_file_names']:
+                actual_image = client.get(url_for('picasso.download_outputs', filename=filename)).data
+                actual_processed_input = Image.open(io.BytesIO(actual_image))
+                expected_processed_input = Image.open('./tests/resources/' + vis.__name__ + '/output/' + str(i) + '.png')
+                assert ImageChops.difference(actual_processed_input, expected_processed_input).getbbox() is None
+                i += 1
         if data['has_processed_input']:
             assert data['processed_input_file_name']
             filename = data['processed_input_file_name']
             actual_image = client.get(url_for('picasso.download_outputs', filename=filename)).data
             actual_processed_input = Image.open(io.BytesIO(actual_image))
-            expected_processed_input = Image.open('./tests/resources/output/' + vis.__name__ + '/pre/default.png')
+            expected_processed_input = Image.open('./tests/resources/' + vis.__name__ + '/pre/default.png')
             assert ImageChops.difference(actual_processed_input, expected_processed_input).getbbox() is None
 
     def test_listing_images(self, client):
