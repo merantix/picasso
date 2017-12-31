@@ -33,7 +33,7 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  - conda create -q -y -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib pandas pytest h5py
+  - conda create -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib pandas pytest h5py
   - source activate test-environment
 
   # install PIL for preprocessing tests
