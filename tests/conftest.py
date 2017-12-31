@@ -35,6 +35,11 @@ def random_image_files(tmpdir_factory):
 
 
 @pytest.fixture
+def test_image():
+    return './tests/resources/input/9.png'
+
+
+@pytest.fixture
 def example_prob_array():
     return np.random.random((3, 10))
 

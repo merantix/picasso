@@ -3,6 +3,7 @@ import json
 
 import pytest
 from flask import url_for
+from PIL import Image, ImageChops
 
 
 class TestRestAPI:
@@ -33,8 +34,8 @@ class TestRestAPI:
         assert type(data['uid']) is int
 
     @pytest.mark.parametrize("vis", _get_visualization_classes())
-    def test_api_visualizing_input(self, client, random_image_files, vis):
-        upload_file = str(random_image_files.listdir()[0])
+    def test_api_visualizing_input(self, client, test_image, vis):
+        upload_file = test_image
         with open(upload_file, "rb") as imageFile:
             f = imageFile.read()
             b = bytearray(f)
@@ -54,6 +55,11 @@ class TestRestAPI:
             assert data['output_file_names']
         if data['has_processed_input']:
             assert data['processed_input_file_name']
+            filename = data['processed_input_file_name']
+            actual_image = client.get(url_for('picasso.download_outputs', filename=filename)).data
+            actual_processed_input = Image.open(io.BytesIO(actual_image))
+            expected_processed_input = Image.open('./tests/resources/output/' + vis.__name__ + '/pre/default.png')
+            assert ImageChops.difference(actual_processed_input, expected_processed_input).getbbox() is None
 
     def test_listing_images(self, client):
         response = client.get(url_for('api.images'))
