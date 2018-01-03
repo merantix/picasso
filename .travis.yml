@@ -52,9 +52,8 @@ install:
 
 jobs:
     include:
-        - stage: tests
-          script: pytest -vls --cov=picasso
-          script: pytest -vls ./integration_tests/
+        - script: pytest -vls --cov=picasso
+        - script: pytest -vls ./integration_tests/
 
 after_success:
   - codecov
