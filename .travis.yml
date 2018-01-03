@@ -50,7 +50,12 @@ install:
   # install TensorFlow (CPU version).
   - pip install tensorflow
 
-script: pytest --cov=picasso
+jobs:
+    include:
+        - stage: unit tests
+          script: pytest -vls --cov=picasso
+        - stage: integration tests
+          script: pytest -vls ./integration_tests/
 
 after_success:
   - codecov
