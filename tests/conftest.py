@@ -12,12 +12,15 @@
 from PIL import Image
 import numpy as np
 import pytest
+from selenium.webdriver import Firefox
+from selenium.webdriver.firefox.options import Options
 
-from picasso import app as _app
+from picasso import create_app
 
 
 @pytest.fixture
 def app():
+    _app = create_app()
     return _app
 
 
@@ -29,6 +32,11 @@ def random_image_files(tmpdir_factory):
         img = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
         img.save(str(fn.join('{}.png'.format(i))), 'PNG')
     return fn
+
+
+@pytest.fixture
+def test_image():
+    return './tests/resources/input/9.png'
 
 
 @pytest.fixture

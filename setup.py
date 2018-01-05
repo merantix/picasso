@@ -55,6 +55,7 @@ except ImportError:
 test_requirements = [
     'pytest',
     'pytest-flask',
+    'selenium==3.6.0',
 ]
 
 docs_require = [

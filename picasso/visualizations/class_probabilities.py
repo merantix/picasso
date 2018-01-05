@@ -23,6 +23,8 @@ class ClassProbabilities(BaseVisualization):
 
     DESCRIPTION = 'Predict class probabilities from new examples'
 
+    ALLOWED_SETTINGS = dict()
+
     def make_visualization(self, inputs, output_dir):
         pre_processed_arrays = self.model.preprocess([example['data']
                                                       for example in inputs])

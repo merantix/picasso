@@ -8,14 +8,33 @@ from flask import Flask
 import os
 import sys
 from picasso.interfaces.rest import API
+from picasso.interfaces.web import frontend
+from picasso import picasso
 
 if sys.version_info.major < 3 or (sys.version_info.major == 3 and
                                   sys.version_info.minor < 5):
     raise SystemError('Python 3.5+ required, found {}'.format(sys.version))
 
-app = Flask(__name__)
-app.config.from_object('picasso.config.Default')
-app.register_blueprint(API, url_prefix='/api')
+
+def create_app(debug=False):
+    _app = Flask(__name__)
+    _app.debug = debug
+    _app.config.from_object('picasso.config.Default')
+    _app.register_blueprint(API, url_prefix='/api')
+    _app.register_blueprint(frontend, url_prefix='/v2')
+    _app.register_blueprint(picasso.frontend)
+
+    # Use a bogus secret key for debugging ease. No client information is stored;
+    # the secret key is only necessary for generating the session cookie.
+    if _app.debug:
+        _app.secret_key = '...'
+    else:
+        _app.secret_key = os.urandom(24)
+
+    return _app
+
+
+app = create_app()
 
 if os.getenv('PICASSO_SETTINGS'):
     app.config.from_envvar('PICASSO_SETTINGS')
@@ -38,5 +57,3 @@ if any([x in app.config.keys() for x in deprecated_settings]):
                      ' and '
                      'https://picasso.readthedocs.io/en/latest/settings.html'
                      .format(__version__))
-
-import picasso.picasso

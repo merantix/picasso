@@ -1,0 +1,53 @@
+<!doctype html>
+<!--
+Copyright (c) 2017 Merantix GmbH
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+   Jan Steinke - initial API and implementation and/or initial
+   documentation
+-->
+<head>
+  <title>PICASSO</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel=stylesheet type=text/css href="{{ url_for('static',filename='style.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type=text/javascript src="{{ url_for('static', filename='web.js') }}"></script>
+</head>
+<div class="container-fluid">
+        <h1><a href="https://github.com/merantix/picasso" id="appstate_title">PICASSO</a>
+		<small class="text-muted"> by
+		 	<a href="http://www.merantix.com">Merantix</a>
+		</small>
+	</h1>
+  <div class=info>
+		<h4><b>Current backend:</b> <div id="appstate_backend">Unknown</div></h4>
+		<h4><b>Current checkpoint:</b> <div id="appstate_checkpoint">Unknown</div></h4>
+		<h4><b>Last updated:</b> <div id="appstate_update">Unknown</div></h4>
+    <a href="{{ url_for('frontend.index') }}" class="btn btn-primary">Start over</a>
+  </div>
+  <hr>
+<form enctype="multipart/form-data">
+    <label for="input_file_upload">Select input images</label>
+    <input type="file" name="file" id="input_file_upload">
+    <p class="help-block">Image types only, please.  Will be resized to CNN input shape.
+    </p>
+    <label for="select_vis">Available visualizations</label>
+    <select class="form-control" name="choice" id="select_vis"></select>
+    <div class="form-group" id="div_settings_list"></div>
+    <input type="button" value="Upload" id="button_visualize" class="btn btn-primary" />
+</form>
+<table class="table table-sm table-striped">
+    <tbody id="results">
+        <tr id="text-results"></tr>
+        <tr id="image-results"></tr>
+    </tbody>
+</table>
+</div>

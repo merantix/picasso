@@ -16,6 +16,9 @@ This is used by the main flask application to provide a REST API.
 
 import os
 import shutil
+import logging
+from tempfile import mkdtemp
+
 from PIL import Image
 from werkzeug.utils import secure_filename
 from flask import (
@@ -32,6 +35,29 @@ from picasso.utils import (
 )
 
 API = Blueprint('api', __name__)
+logger = logging.getLogger(__name__)
+
+
+@API.before_request
+def initialize_new_session():
+    """Check session and initialize if necessary
+
+    Before every request, check the user session.  If no session exists, add
+    one and provide temporary locations for images
+
+    """
+    if 'image_uid_counter' in session and 'image_list' in session:
+        logger.debug('images are already being tracked')
+    else:
+        # reset image list counter for the session
+        session['image_uid_counter'] = 0
+        session['image_list'] = []
+    if 'img_input_dir' in session and 'img_output_dir' in session:
+        logger.debug('temporary image directories already exist')
+    else:
+        # make image upload directory
+        session['img_input_dir'] = mkdtemp()
+        session['img_output_dir'] = mkdtemp()
 
 
 @API.route('/', methods=['GET'])
@@ -66,7 +92,7 @@ def images():
     if request.method == 'POST':
         file_upload = request.files['file']
         if file_upload:
-            image = {}
+            image = dict()
             image['filename'] = secure_filename(file_upload.filename)
             full_path = os.path.join(session['img_input_dir'],
                                      image['filename'])
@@ -99,12 +125,8 @@ def visualizers():
 @API.route('/visualizers/<vis_name>', methods=['GET'])
 def visualizers_information(vis_name):
     vis = get_visualizations()[vis_name]
-    if hasattr(vis, 'ALLOWED_SETTINGS'):
-        settings = vis.ALLOWED_SETTINGS
-    else:
-        settings = {}
 
-    return jsonify(settings=settings)
+    return jsonify(settings=vis.ALLOWED_SETTINGS)
 
 
 @API.route('/visualize', methods=['GET'])
@@ -120,23 +142,25 @@ def visualize():
     image_uid = request.args.get('image')
     vis_name = request.args.get('visualizer')
     vis = get_visualizations()[vis_name]
-    if hasattr(vis, 'settings'):
-        for key in vis.settings.keys():
+    if vis.ALLOWED_SETTINGS:
+        for key in vis.ALLOWED_SETTINGS.keys():
             if request.args.get(key) is not None:
                 session['settings'][key] = request.args.get(key)
             else:
-                session['settings'][key] = vis.settings[key][0]
+                session['settings'][key] = vis.ALLOWED_SETTINGS[key][0]
+    else:
+        logger.debug('Selected Visualizer {0} has no settings.'.format(vis_name))
     inputs = []
     for image in session['image_list']:
         if image['uid'] == int(image_uid):
             full_path = os.path.join(session['img_input_dir'],
                                      image['filename'])
-            entry = {}
+            entry = dict()
             entry['filename'] = image['filename']
             entry['data'] = Image.open(full_path)
             inputs.append(entry)
-    if 'settings' in session:
-        vis.update_settings(session['settings'])
+
+    vis.update_settings(session['settings'])
     output = vis.make_visualization(
         inputs, output_dir=session['img_output_dir'])
     return jsonify(output[0])

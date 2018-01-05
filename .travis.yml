@@ -5,6 +5,16 @@ dist: trusty
 language: python
 python: "3.5"
 
+
+addons:
+  firefox: latest
+
+before_install:
+  - wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
+  - mkdir geckodriver
+  - tar -xzf geckodriver-v0.19.1-linux64.tar.gz -C geckodriver
+  - export PATH=$PATH:$PWD/geckodriver
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   # code below is taken from http://conda.pydata.org/docs/travis.html
@@ -23,7 +33,7 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib pandas pytest h5py
+  - conda create -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib pandas pytest h5py
   - source activate test-environment
 
   # install PIL for preprocessing tests
@@ -40,7 +50,10 @@ install:
   # install TensorFlow (CPU version).
   - pip install tensorflow
 
-script: pytest --cov=picasso
+jobs:
+    include:
+        - script: pytest -vls --cov=picasso
+        - script: pytest -vls ./integration_tests/
 
 after_success:
   - codecov

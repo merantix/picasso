@@ -51,15 +51,16 @@ lint: ## check style with flake8
 	flake8 picasso tests
 
 test: ## run tests quickly with the default Python
-	py.test
-	
+	py.test ./tests
+	py.test ./integration_tests
+
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source picasso -m pytest
-	
+
 		coverage report -m
 		coverage html
 		$(BROWSER) htmlcov/index.html
