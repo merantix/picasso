@@ -26,8 +26,8 @@ from flask import (
     current_app,
     jsonify,
     session,
-    request
-    )
+    request,
+    send_from_directory)
 from picasso import __version__
 from picasso.utils import (
     get_app_state,
@@ -175,3 +175,27 @@ def reset():
     shutil.rmtree(session['img_output_dir'])
     session.clear()
     return jsonify(ok='true')
+
+
+@API.route('/inputs/<filename>')
+def download_inputs(filename):
+    """For serving input images"""
+    return send_from_directory(session['img_input_dir'],
+                               filename)
+
+
+@API.route('/outputs/<filename>')
+def download_outputs(filename):
+    """For serving output images"""
+    return send_from_directory(session['img_output_dir'],
+                               filename)
+
+
+@API.errorhandler(500)
+def internal_server_error(e):
+    return jsonify(ok=False, error=e, code=500), 500
+
+
+@API.errorhandler(404)
+def not_found_error(e):
+    return jsonify(ok=False, error=e, code=404), 404

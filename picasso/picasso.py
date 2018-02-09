@@ -202,25 +202,4 @@ def select_files():
                            settings=session['settings'])
 
 
-@frontend.route('/inputs/<filename>')
-def download_inputs(filename):
-    """For serving input images"""
-    return send_from_directory(session['img_input_dir'],
-                               filename)
 
-
-@frontend.route('/outputs/<filename>')
-def download_outputs(filename):
-    """For serving output images"""
-    return send_from_directory(session['img_output_dir'],
-                               filename)
-
-
-@frontend.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html', app_state=get_app_state()), 500
-
-
-@frontend.errorhandler(404)
-def not_found_error(e):
-    return render_template('404.html', app_state=get_app_state()), 404
