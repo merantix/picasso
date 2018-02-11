@@ -47,6 +47,7 @@ def example_prob_array():
 @pytest.fixture
 def base_model():
     from picasso.models.base import BaseModel
+
     class BaseModelForTest(BaseModel):
         def load(self, data_dir):
             pass
