@@ -22,6 +22,7 @@ from flask import (
     g,
     current_app
 )
+from picasso.visualizations import *
 from picasso.visualizations.base import BaseVisualization
 from picasso.models.base import load_model
 

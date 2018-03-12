@@ -79,13 +79,13 @@ $("document").ready(function() {
             success: function(data) {
                 tr_text_results.empty();
                 tr_image_results.empty();
-                tr_image_results.append('<td align="center"><img src="/inputs/'+ data.input_file_name+'" style="width:244px;height:244px;"/></td>');
+                tr_image_results.append('<td align="center"><img src="/api/inputs/'+ data.input_file_name+'" style="width:244px;height:244px;"/></td>');
                 if (data.has_processed_input) {
-                    tr_image_results.append('<td align="center"><img src="/outputs/'+ data.processed_input_file_name+'" style="width:244px;height:244px;"/></td>');
+                    tr_image_results.append('<td align="center"><img src="/api/outputs/'+ data.processed_input_file_name+'" style="width:244px;height:244px;"/></td>');
                 }
                 if (data.has_output) {
                     $.each(data.output_file_names, function(i, j) {
-                        tr_image_results.append('<td align="center"><img src="/outputs/'+ j +'" style="width:244px;height:244px;"/></td>');
+                        tr_image_results.append('<td align="center"><img src="/api/outputs/'+ j +'" style="width:244px;height:244px;"/></td>');
                     })
                 }
                 tr_text_results.append('<td align="center"><b>'+ data.input_file_name +'</b></td>')

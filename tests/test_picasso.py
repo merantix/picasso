@@ -23,58 +23,6 @@ Tests for `picasso` module.
 """
 import os
 
-from flask import url_for
-import pytest
-from werkzeug.test import EnvironBuilder
-
-
-class TestWebApp:
-    from picasso.utils import _get_visualization_classes
-
-    def test_landing_page_get(self, client):
-        assert client.get(url_for('picasso.landing')).status_code == 200
-
-    @pytest.mark.parametrize("vis", _get_visualization_classes())
-    def test_landing_page_post(self, client, vis):
-        rv = client.post(url_for('picasso.landing'),
-                         data=dict(choice=vis.__name__))
-        assert rv.status_code == 200
-
-    @pytest.mark.parametrize("vis", _get_visualization_classes())
-    def test_settings_page(self, client, vis):
-        if hasattr(vis, 'settings'):
-            with client.session_transaction() as sess:
-                sess['vis_name'] = vis.__name__
-            rv = client.post(url_for('picasso.visualization_settings'))
-            assert rv.status_code == 200
-
-    @pytest.mark.parametrize("vis", _get_visualization_classes())
-    def test_file_selection_get(self, client, vis):
-        with client.session_transaction() as sess:
-            sess['vis_name'] = vis.__name__
-        url = url_for('picasso.select_files')
-        rv = client.get(url)
-        assert rv.status_code == 200
-
-    @pytest.mark.parametrize("vis", _get_visualization_classes())
-    def test_file_selection_post(self, client, vis, random_image_files):
-        with client.session_transaction() as sess:
-            sess['vis_name'] = vis.__name__
-            # load some settings into the session if the visualization calls
-            # for it
-            if hasattr(vis, 'settings'):
-                sess['settings'] = {key: vis.settings[key][0]
-                                    for key in vis.settings}
-
-        # random images
-        builder = EnvironBuilder(path=url_for('picasso.select_files'), method='POST')
-        for path in random_image_files.listdir():
-            path = str(path)
-            builder.files.add_file('file[]', path,
-                                   filename=os.path.split(str(path))[-1])
-        rv = client.post(url_for('picasso.select_files'), data=builder.files)
-        assert rv.status_code == 200
-
 
 class TestBaseModel:
 

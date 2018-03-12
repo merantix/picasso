@@ -14,7 +14,7 @@ def verify_data(client, data, vis, prefix=''):
         assert data['output_file_names']
         i = 1
         for filename in data['output_file_names']:
-            actual_image = client.get(url_for('picasso.download_outputs', filename=filename)).data
+            actual_image = client.get(url_for('api.download_outputs', filename=filename)).data
             actual_processed_input = Image.open(io.BytesIO(actual_image))
             expected_processed_input = Image.open(res_path + vis.__name__ + '/' + prefix + 'output/' + str(i) + '.png')
             assert ImageChops.difference(actual_processed_input, expected_processed_input).getbbox() is None
@@ -22,7 +22,7 @@ def verify_data(client, data, vis, prefix=''):
     if data['has_processed_input']:
         assert data['processed_input_file_name']
         filename = data['processed_input_file_name']
-        actual_image = client.get(url_for('picasso.download_outputs', filename=filename)).data
+        actual_image = client.get(url_for('api.download_outputs', filename=filename)).data
         actual_processed_input = Image.open(io.BytesIO(actual_image))
         expected_processed_input = Image.open(res_path + vis.__name__ + '/' + prefix + 'pre/default.png')
         assert ImageChops.difference(actual_processed_input, expected_processed_input).getbbox() is None

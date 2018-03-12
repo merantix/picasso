@@ -9,7 +9,6 @@ import os
 import sys
 from picasso.interfaces.rest import API
 from picasso.interfaces.web import frontend
-from picasso import picasso
 
 if sys.version_info.major < 3 or (sys.version_info.major == 3 and
                                   sys.version_info.minor < 5):
@@ -21,8 +20,7 @@ def create_app(debug=False):
     _app.debug = debug
     _app.config.from_object('picasso.config.Default')
     _app.register_blueprint(API, url_prefix='/api')
-    _app.register_blueprint(frontend, url_prefix='/v2')
-    _app.register_blueprint(picasso.frontend)
+    _app.register_blueprint(frontend, url_prefix='/')
 
     # Use a bogus secret key for debugging ease. No client information is stored;
     # the secret key is only necessary for generating the session cookie.
